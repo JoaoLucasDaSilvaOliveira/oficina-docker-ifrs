@@ -1,0 +1,768 @@
+Docker Compose version v5.6.0
+
+docker compose --help
+Usage:  docker compose [OPTIONS] COMMAND
+
+Define and run multi-container applications with Docker
+
+Options:
+      --all-resources              Include all resources, even those not
+                                   used by services
+      --ansi string                Control when to print ANSI control
+                                   characters ("never"|"always"|"auto")
+                                   (default "auto")
+      --compatibility              Run compose in backward compatibility mode
+      --dry-run                    Execute command in dry run mode
+      --env-file stringArray       Specify an alternate environment file
+  -f, --file stringArray           Compose configuration files
+      --parallel int               Control max parallelism, -1 for
+                                   unlimited (default -1)
+      --profile stringArray        Specify a profile to enable
+      --progress string            Set type of progress output (auto,
+                                   tty, plain, json, quiet)
+      --project-directory string   Specify an alternate working directory
+                                   (default: the path of the, first
+                                   specified, Compose file)
+  -p, --project-name string        Project name
+
+Management Commands:
+  bridge                  Convert compose files into another model
+
+Commands:
+  attach                  Attach local standard input, output, and error streams to a service's running container
+  build                   Build or rebuild services
+  commit                  Create a new image from a service container's changes
+  config                  Parse, resolve and render compose file in canonical format
+  cp                      Copy files/folders between a service container and the local filesystem
+  create                  Creates containers for a service
+  down                    Stop and remove containers, networks
+  events                  Receive real time events from containers
+  exec                    Execute a command in a running container
+  export                  Export a service container's filesystem as a tar archive
+  images                  List images used by the created containers
+  kill                    Force stop service containers
+  logs                    View output from containers
+  ls                      List running compose projects
+  pause                   Pause services
+  port                    List port mappings or print the public port for a specific mapping for the service
+  ps                      List containers
+  publish                 Publish compose application
+  pull                    Pull service images
+  push                    Push service images
+  restart                 Restart service containers
+  rm                      Removes stopped service containers
+  run                     Run a one-off command on a service
+  scale                   Scale services 
+  start                   Start services
+  stats                   Display a live stream of container(s) resource usage statistics
+  stop                    Stop services
+  top                     Display the running processes
+  unpause                 Unpause services
+  up                      Create and start containers
+  version                 Show the Docker Compose version information
+  volumes                 List volumes
+  wait                    Block until containers of all (or specified) services stop.
+  watch                   Watch build context for service and rebuild/refresh containers when files are updated
+
+Run 'docker compose COMMAND --help' for more information on a command.
+
+
+docker compose bridge --help
+Usage:  docker compose bridge [OPTIONS] COMMAND
+
+Convert compose files into another model
+
+Options:
+      --dry-run   Execute command in dry run mode
+
+Management Commands:
+  transformations Manage transformation images
+
+Commands:
+  convert         Convert compose files to Kubernetes manifests, Helm charts, or another model
+
+Run 'docker compose bridge COMMAND --help' for more information on a command.
+
+
+docker compose bridge transformations --help
+Usage:  docker compose bridge transformations [OPTIONS] COMMAND
+
+Manage transformation images
+
+Options:
+      --dry-run   Execute command in dry run mode
+
+Commands:
+  create      Create a new transformation
+  list        List available transformations
+
+Run 'docker compose bridge transformations COMMAND --help' for more information on a command.
+
+
+docker compose bridge transformations create --help
+Usage:  docker compose bridge transformations create [OPTION] PATH
+
+Create a new transformation
+
+Options:
+      --dry-run       Execute command in dry run mode
+  -f, --from string   Existing transformation to copy (default:
+                      docker/compose-bridge-kubernetes)
+
+
+docker compose bridge transformations list --help
+Usage:  docker compose bridge transformations list
+
+List available transformations
+
+Aliases:
+  docker compose bridge transformations list, docker compose bridge transformations ls
+
+Options:
+      --dry-run         Execute command in dry run mode
+      --format string   Format the output. Values: [table | json]
+                        (default "table")
+  -q, --quiet           Only display transformer names
+
+
+docker compose bridge convert --help
+Usage:  docker compose bridge convert
+
+Convert compose files to Kubernetes manifests, Helm charts, or another model
+
+Options:
+      --dry-run                      Execute command in dry run mode
+  -o, --output string                The output directory for the
+                                     Kubernetes resources (default "out")
+      --templates string             Directory containing transformation
+                                     templates
+  -t, --transformation stringArray   Transformation to apply to compose
+                                     model (default:
+                                     docker/compose-bridge-kubernetes)
+  -y, --yes                          Assume "yes" to the output directory
+                                     overwrite prompt. For scripts/CI,
+                                     where no interactive confirmation is
+                                     possible
+
+
+docker compose attach --help
+Usage:  docker compose attach [OPTIONS] SERVICE
+
+Attach local standard input, output, and error streams to a service's running container
+
+Options:
+      --detach-keys string   Override the key sequence for detaching from
+                             a container.
+      --dry-run              Execute command in dry run mode
+      --index int            index of the container if service has
+                             multiple replicas.
+      --no-stdin             Do not attach STDIN
+      --sig-proxy            Proxy all received signals to the process
+                             (default true)
+
+
+docker compose build --help
+Usage:  docker compose build [OPTIONS] [SERVICE...]
+
+Build or rebuild services
+
+Options:
+      --build-arg stringArray   Set build-time variables for services
+      --builder string          Set builder to use
+      --check                   Check build configuration
+      --dry-run                 Execute command in dry run mode
+  -m, --memory bytes            Set memory limit for the build container.
+                                Not supported by BuildKit.
+      --no-cache                Do not use cache when building the image
+      --print                   Print equivalent bake file
+      --provenance string       Add a provenance attestation
+      --pull                    Always attempt to pull a newer version of
+                                the image
+      --push                    Push service images
+  -q, --quiet                   Suppress the build output
+      --sbom string             Add a SBOM attestation
+      --ssh string              Set SSH authentications used when
+                                building service images. (use 'default'
+                                for using your default SSH Agent)
+      --with-dependencies       Also build dependencies (transitively)
+
+
+docker compose commit --help
+Usage:  docker compose commit [OPTIONS] SERVICE [REPOSITORY[:TAG]]
+
+Create a new image from a service container's changes
+
+Options:
+  -a, --author string    Author (e.g., "John Hannibal Smith
+                         <hannibal@a-team.com>")
+  -c, --change list      Apply Dockerfile instruction to the created image
+      --dry-run          Execute command in dry run mode
+      --index int        index of the container if service has multiple
+                         replicas.
+  -m, --message string   Commit message
+  -p, --pause            Pause container during commit (default true)
+
+
+docker compose config --help
+Usage:  docker compose config [OPTIONS] [SERVICE...]
+
+Parse, resolve and render compose file in canonical format
+
+Options:
+      --dry-run                 Execute command in dry run mode
+      --environment             Print environment used for interpolation.
+      --format string           Format the output. Values: [yaml | json]
+      --hash string             Print the service config hash, one per line.
+      --images                  Print the image names, one per line.
+      --lock-image-digests      Produces an override file with image digests
+      --models                  Print the model names, one per line.
+      --networks                Print the network names, one per line.
+      --no-consistency          Don't check model consistency - warning:
+                                may produce invalid Compose output
+      --no-env-resolution       Don't resolve service env files
+      --no-interpolate          Don't interpolate environment variables
+      --no-normalize            Don't normalize compose model
+      --no-path-resolution      Don't resolve file paths
+  -o, --output string           Save to file (default to stdout)
+      --profiles                Print the profile names, one per line.
+  -q, --quiet                   Only validate the configuration, don't
+                                print anything
+      --resolve-image-digests   Pin image tags to digests
+      --services                Print the service names, one per line.
+      --variables               Print model variables and default values.
+      --volumes                 Print the volume names, one per line.
+
+
+docker compose cp --help
+Usage:  docker compose cp [OPTIONS] SERVICE:SRC_PATH DEST_PATH|-
+	docker compose cp [OPTIONS] SRC_PATH|- SERVICE:DEST_PATH
+
+Copy files/folders between a service container and the local filesystem
+
+Options:
+      --all           Include containers created by the run command
+  -a, --archive       Archive mode (copy all uid/gid information)
+      --dry-run       Execute command in dry run mode
+  -L, --follow-link   Always follow symbol link in SRC_PATH
+      --index int     Index of the container if service has multiple replicas
+
+
+docker compose create --help
+Usage:  docker compose create [OPTIONS] [SERVICE...]
+
+Creates containers for a service
+
+Options:
+      --build            Build images before starting containers
+      --dry-run          Execute command in dry run mode
+      --force-recreate   Recreate containers even if their configuration
+                         and image haven't changed
+      --no-build         Don't build an image, even if it's policy
+      --no-recreate      If containers already exist, don't recreate
+                         them. Incompatible with --force-recreate.
+      --pull string      Pull image before running
+                         ("always"|"missing"|"never"|"build") (default
+                         "policy")
+      --quiet-pull       Pull without printing progress information
+      --remove-orphans   Remove containers for services not defined in
+                         the Compose file
+      --scale scale      Scale SERVICE to NUM instances. Overrides the
+                         scale setting in the Compose file if present.
+  -y, --yes              Assume "yes" as answer to all prompts and run
+                         non-interactively
+
+
+docker compose down --help
+Usage:  docker compose down [OPTIONS] [SERVICES]
+
+Stop and remove containers, networks
+
+Options:
+      --dry-run          Execute command in dry run mode
+      --remove-orphans   Remove containers for services not defined in
+                         the Compose file
+      --rmi string       Remove images used by services. "local" remove
+                         only images that don't have a custom tag
+                         ("local"|"all")
+  -t, --timeout int      Specify a shutdown timeout in seconds
+  -v, --volumes          Remove named volumes declared in the "volumes"
+                         section of the Compose file and anonymous
+                         volumes attached to containers
+
+
+docker compose events --help
+Usage:  docker compose events [OPTIONS] [SERVICE...]
+
+Receive real time events from containers
+
+Options:
+      --dry-run        Execute command in dry run mode
+      --json           Output events as a stream of json objects
+      --since string   Show all events created since timestamp
+      --until string   Stream events until this timestamp
+
+
+docker compose exec --help
+Usage:  docker compose exec [OPTIONS] SERVICE COMMAND [ARGS...]
+
+Execute a command in a running container
+
+Options:
+  -d, --detach            Detached mode: Run command in the background
+      --dry-run           Execute command in dry run mode
+  -e, --env stringArray   Set environment variables
+      --index int         Index of the container if service has multiple
+                          replicas
+  -T, --no-tty            Disable pseudo-TTY allocation. By default
+                          'docker compose exec' allocates a TTY. (default
+                          true)
+      --privileged        Give extended privileges to the process
+  -u, --user string       Run the command as this user
+  -w, --workdir string    Path to workdir directory for this command
+
+
+docker compose export --help
+Usage:  docker compose export [OPTIONS] SERVICE
+
+Export a service container's filesystem as a tar archive
+
+Options:
+      --dry-run         Execute command in dry run mode
+      --index int       index of the container if service has multiple
+                        replicas.
+  -o, --output string   Write to a file, instead of STDOUT
+
+
+docker compose images --help
+Usage:  docker compose images [OPTIONS] [SERVICE...]
+
+List images used by the created containers
+
+Options:
+      --dry-run         Execute command in dry run mode
+      --format string   Format the output. Values: [table | json]
+                        (default "table")
+  -q, --quiet           Only display IDs
+
+
+docker compose kill --help
+Usage:  docker compose kill [OPTIONS] [SERVICE...]
+
+Force stop service containers
+
+Options:
+      --dry-run          Execute command in dry run mode
+      --remove-orphans   Remove containers for services not defined in
+                         the Compose file
+  -s, --signal string    SIGNAL to send to the container (default "SIGKILL")
+
+
+docker compose logs --help
+Usage:  docker compose logs [OPTIONS] [SERVICE...]
+
+View output from containers
+
+Options:
+      --dry-run         Execute command in dry run mode
+  -f, --follow          Follow log output
+      --index int       index of the container if service has multiple
+                        replicas
+      --no-color        Produce monochrome output
+      --no-log-prefix   Don't print prefix in logs
+      --since string    Show logs since timestamp (e.g.
+                        2013-01-02T13:23:37Z) or relative (e.g. 42m for
+                        42 minutes)
+  -n, --tail string     Number of lines to show from the end of the logs
+                        for each container (default "all")
+  -t, --timestamps      Show timestamps
+      --until string    Show logs before a timestamp (e.g.
+                        2013-01-02T13:23:37Z) or relative (e.g. 42m for
+                        42 minutes)
+
+
+docker compose ls --help
+Usage:  docker compose ls [OPTIONS]
+
+List running compose projects
+
+Options:
+  -a, --all             Show all stopped Compose projects
+      --dry-run         Execute command in dry run mode
+      --filter filter   Filter output based on conditions provided
+      --format string   Format the output. Values: [table | json]
+                        (default "table")
+  -q, --quiet           Only display project names
+
+
+docker compose pause --help
+Usage:  docker compose pause [SERVICE...]
+
+Pause services
+
+Options:
+      --dry-run   Execute command in dry run mode
+
+
+docker compose port --help
+Usage:  docker compose port [OPTIONS] SERVICE [PRIVATE_PORT]
+
+List port mappings or print the public port for a specific mapping for the service
+
+Options:
+      --dry-run           Execute command in dry run mode
+      --index int         Index of the container if service has multiple
+                          replicas
+      --protocol string   tcp or udp (default "tcp")
+
+
+docker compose ps --help
+Usage:  docker compose ps [OPTIONS] [SERVICE...]
+
+List containers
+
+Options:
+  -a, --all                  Show all stopped containers (including those
+                             created by the run command)
+      --dry-run              Execute command in dry run mode
+      --filter string        Filter services by a property (supported
+                             filters: status)
+      --format string        Format output using a custom template:
+                             'table':            Print output in table
+                             format with column headers (default)
+                             'table TEMPLATE':   Print output in table
+                             format using the given Go template
+                             'json':             Print in JSON format
+                             'TEMPLATE':         Print output using the
+                             given Go template.
+                             Refer to
+                             https://docs.docker.com/go/formatting/ for
+                             more information about formatting output
+                             with templates
+      --no-trunc             Don't truncate output
+      --orphans              Include orphaned services (not declared by
+                             project) (default true)
+  -q, --quiet                Only display IDs
+      --services             Display services
+      --status stringArray   Filter services by status. Values: [paused |
+                             restarting | removing | running | dead |
+                             created | exited]
+
+
+docker compose publish --help
+Usage:  docker compose publish [OPTIONS] REPOSITORY[:TAG]
+
+Publish compose application
+
+Options:
+      --app                     Published compose application (includes
+                                referenced images)
+      --dry-run                 Execute command in dry run mode
+      --oci-version string      OCI image/artifact specification version
+                                (automatically determined by default)
+      --resolve-image-digests   Pin image tags to digests
+      --with-env                Include environment variables in the
+                                published OCI artifact
+  -y, --yes                     Assume "yes" as answer to all prompts
+
+
+docker compose pull --help
+Usage:  docker compose pull [OPTIONS] [SERVICE...]
+
+Pull service images
+
+Options:
+      --dry-run                Execute command in dry run mode
+      --ignore-buildable       Ignore images that can be built
+      --ignore-pull-failures   Pull what it can and ignores images with
+                               pull failures
+      --include-deps           Also pull services declared as dependencies
+      --policy string          Apply pull policy ("missing"|"always")
+  -q, --quiet                  Pull without printing progress information
+
+
+docker compose push --help
+Usage:  docker compose push [OPTIONS] [SERVICE...]
+
+Push service images
+
+Options:
+      --dry-run                Execute command in dry run mode
+      --ignore-push-failures   Push what it can and ignores images with
+                               push failures
+      --include-deps           Also push images of services declared as
+                               dependencies
+  -q, --quiet                  Push without printing progress information
+
+
+docker compose restart --help
+Usage:  docker compose restart [OPTIONS] [SERVICE...]
+
+Restart service containers
+
+Options:
+      --dry-run       Execute command in dry run mode
+      --no-deps       Don't restart dependent services
+  -t, --timeout int   Specify a shutdown timeout in seconds
+
+
+docker compose rm --help
+Usage:  docker compose rm [OPTIONS] [SERVICE...]
+
+Removes stopped service containers
+
+By default, anonymous volumes attached to containers will not be removed. You
+can override this with -v. To list all volumes, use "docker volume ls".
+
+Any data which is not in a volume will be lost.
+
+Options:
+      --dry-run   Execute command in dry run mode
+  -f, --force     Don't ask to confirm removal
+  -s, --stop      Stop the containers, if required, before removing
+  -v, --volumes   Remove any anonymous volumes attached to containers
+
+
+docker compose run --help
+Usage:  docker compose run [OPTIONS] SERVICE [COMMAND] [ARGS...]
+
+Run a one-off command on a service
+
+Options:
+      --build                       Build image before starting container
+      --cap-add list                Add Linux capabilities
+      --cap-drop list               Drop Linux capabilities
+  -d, --detach                      Run container in background and print
+                                    container ID
+      --dry-run                     Execute command in dry run mode
+      --entrypoint string           Override the entrypoint of the image
+  -e, --env stringArray             Set environment variables
+      --env-from-file stringArray   Set environment variables from file
+  -i, --interactive                 Keep STDIN open even if not attached
+                                    (default true)
+  -l, --label stringArray           Add or override a label
+      --name string                 Assign a name to the container
+      --no-deps                     Don't start linked services
+  -T, --no-tty                      Disable pseudo-TTY allocation
+                                    (default: auto-detected) (default true)
+  -p, --publish stringArray         Publish a container's port(s) to the host
+      --pull string                 Pull image before running
+                                    ("always"|"missing"|"never") (default
+                                    "policy")
+  -q, --quiet                       Don't print anything to STDOUT
+      --quiet-build                 Suppress progress output from the
+                                    build process
+      --quiet-pull                  Pull without printing progress information
+      --remove-orphans              Remove containers for services not
+                                    defined in the Compose file
+      --rm                          Automatically remove the container
+                                    when it exits
+  -P, --service-ports               Run command with all service's ports
+                                    enabled and mapped to the host
+      --use-aliases                 Use the service's network useAliases
+                                    in the network(s) the container
+                                    connects to
+  -u, --user string                 Run as specified username or uid
+  -v, --volume stringArray          Bind mount a volume
+  -w, --workdir string              Working directory inside the container
+
+
+docker compose scale --help
+Usage:  docker compose scale [SERVICE=REPLICAS...]
+
+Scale services
+
+Options:
+      --dry-run   Execute command in dry run mode
+      --no-deps   Don't start linked services
+
+
+docker compose start --help
+Usage:  docker compose start [SERVICE...]
+
+Start services
+
+Options:
+      --dry-run            Execute command in dry run mode
+      --wait               Wait for services to be running|healthy.
+                           Implies detached mode.
+      --wait-timeout int   Maximum duration in seconds to wait for the
+                           project to be running|healthy
+
+
+docker compose stats --help
+Usage:  docker compose stats [OPTIONS] [SERVICE]
+
+Display a live stream of container(s) resource usage statistics
+
+Options:
+  -a, --all             Show all containers (default shows just running)
+      --dry-run         Execute command in dry run mode
+      --format string   Format output using a custom template:
+                        'table':            Print output in table format
+                        with column headers (default)
+                        'table TEMPLATE':   Print output in table format
+                        using the given Go template
+                        'json':             Print in JSON format
+                        'TEMPLATE':         Print output using the given
+                        Go template.
+                        Refer to
+                        https://docs.docker.com/engine/cli/formatting/
+                        for more information about formatting output with
+                        templates
+      --no-stream       Disable streaming stats and only pull the first result
+      --no-trunc        Do not truncate output
+
+
+docker compose stop --help
+Usage:  docker compose stop [OPTIONS] [SERVICE...]
+
+Stop services
+
+Options:
+      --dry-run       Execute command in dry run mode
+  -t, --timeout int   Specify a shutdown timeout in seconds
+
+
+docker compose top --help
+Usage:  docker compose top [SERVICES...]
+
+Display the running processes
+
+Options:
+      --dry-run   Execute command in dry run mode
+
+
+docker compose unpause --help
+Usage:  docker compose unpause [SERVICE...]
+
+Unpause services
+
+Options:
+      --dry-run   Execute command in dry run mode
+
+
+docker compose up --help
+Usage:  docker compose up [OPTIONS] [SERVICE...]
+
+Create and start containers
+
+Options:
+      --abort-on-container-exit      Stops all containers if any
+                                     container was stopped. Incompatible
+                                     with -d
+      --abort-on-container-failure   Stops all containers if any
+                                     container exited with failure.
+                                     Incompatible with -d
+      --always-recreate-deps         Recreate dependent containers.
+                                     Incompatible with --no-recreate.
+      --attach stringArray           Restrict attaching to the specified
+                                     services. Incompatible with
+                                     --attach-dependencies.
+      --attach-dependencies          Automatically attach to log output
+                                     of dependent services
+      --build                        Build images before starting containers
+  -d, --detach                       Detached mode: Run containers in the
+                                     background
+      --dry-run                      Execute command in dry run mode
+      --exit-code-from string        Return the exit code of the selected
+                                     service container. Implies
+                                     --abort-on-container-exit
+      --force-recreate               Recreate containers even if their
+                                     configuration and image haven't changed
+      --menu                         Enable interactive shortcuts when
+                                     running attached. Incompatible with
+                                     --detach. Can also be enable/disable
+                                     by setting COMPOSE_MENU environment var.
+      --no-attach stringArray        Do not attach (stream logs) to the
+                                     specified services
+      --no-build                     Don't build an image, even if it's policy
+      --no-color                     Produce monochrome output
+      --no-deps                      Don't start linked services
+      --no-log-prefix                Don't print prefix in logs
+      --no-recreate                  If containers already exist, don't
+                                     recreate them. Incompatible with
+                                     --force-recreate.
+      --no-start                     Don't start the services after
+                                     creating them
+      --pull string                  Pull image before running
+                                     ("always"|"missing"|"never")
+                                     (default "policy")
+      --quiet-build                  Suppress the build output
+      --quiet-pull                   Pull without printing progress
+                                     information
+      --remove-orphans               Remove containers for services not
+                                     defined in the Compose file
+  -V, --renew-anon-volumes           Recreate anonymous volumes instead
+                                     of retrieving data from the previous
+                                     containers
+      --scale scale                  Scale SERVICE to NUM instances.
+                                     Overrides the scale setting in the
+                                     Compose file if present.
+  -t, --timeout int                  Use this timeout in seconds for
+                                     container shutdown when attached or
+                                     when containers are already running
+      --timestamps                   Show timestamps
+      --wait                         Wait for services to be
+                                     running|healthy. Implies detached mode.
+      --wait-timeout int             Maximum duration in seconds to wait
+                                     for the project to be running|healthy
+  -w, --watch                        Watch source code and
+                                     rebuild/refresh containers when
+                                     files are updated.
+  -y, --yes                          Assume "yes" as answer to all
+                                     prompts and run non-interactively
+
+
+docker compose version --help
+Usage:  docker compose version [OPTIONS]
+
+Show the Docker Compose version information
+
+Options:
+      --dry-run         Execute command in dry run mode
+  -f, --format string   Format the output. Values: [pretty | json].
+                        (Default: pretty)
+      --short           Shows only Compose's version number
+
+
+docker compose volumes --help
+Usage:  docker compose volumes [OPTIONS] [SERVICE...]
+
+List volumes
+
+Options:
+      --dry-run         Execute command in dry run mode
+      --format string   Format output using a custom template:
+                        'table':            Print output in table format
+                        with column headers (default)
+                        'table TEMPLATE':   Print output in table format
+                        using the given Go template
+                        'json':             Print in JSON format
+                        'TEMPLATE':         Print output using the given
+                        Go template.
+                        Refer to https://docs.docker.com/go/formatting/
+                        for more information about formatting output with
+                        templates (default "table")
+  -q, --quiet           Only display volume names
+
+
+docker compose wait --help
+Usage:  docker compose wait SERVICE [SERVICE...] [OPTIONS]
+
+Block until containers of all (or specified) services stop.
+
+Options:
+      --down-project   Drops project when the first container stops
+      --dry-run        Execute command in dry run mode
+
+
+docker compose watch --help
+Usage:  docker compose watch [SERVICE...]
+
+Watch build context for service and rebuild/refresh containers when files are updated
+
+Options:
+      --dry-run   Execute command in dry run mode
+      --no-up     Do not build & start services before watching
+      --prune     Prune dangling images on rebuild (default true)
+      --quiet     hide build output

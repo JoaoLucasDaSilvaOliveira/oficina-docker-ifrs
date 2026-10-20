@@ -1,0 +1,7 @@
+# Overlay para a segunda experiência: agora a IDE vê os arquivos do projeto.
+services:
+  ide:
+    volumes:
+      - type: bind
+        source: ./exemplos/mural
+        target: /workspace

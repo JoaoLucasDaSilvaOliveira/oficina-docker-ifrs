@@ -1,0 +1,10 @@
+# Arquivos locais e credenciais
+.env
+.env.*
+!.env.example
+.runtime/*
+!.runtime/.gitkeep
+node_modules/
+coverage.out
+*.test
+.test-results/

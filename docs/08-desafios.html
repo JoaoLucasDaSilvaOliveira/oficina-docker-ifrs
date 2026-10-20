@@ -1,0 +1,44 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Desafios, diagnóstico e recuperação · Oficina Docker</title><style>@font-face{font-family:Barlow;src:url(../apresentacao/assets/fonts/barlow-regular.ttf)}@font-face{font-family:Barlow;src:url(../apresentacao/assets/fonts/barlow-semibold.ttf);font-weight:600}*{box-sizing:border-box}body{margin:0;background:#f0f5fa;color:#102b43;font:18px/1.65 Barlow,system-ui,sans-serif}header{border-bottom:1px solid #d6e2ec;padding:18px max(25px,5vw);display:flex;justify-content:space-between;gap:20px;background:white}header a{font-size:14px;text-decoration:none}main{max-width:930px;margin:45px auto;padding:0 25px 70px}h1{font-size:44px;line-height:1.1;letter-spacing:-1px;margin:30px 0}h2{font-size:27px;line-height:1.3;margin:45px 0 18px;padding-top:20px;border-top:1px solid #d6e2ec}h3{font-size:23px}a{color:#175fe6}p,li{overflow-wrap:anywhere}li{margin:10px 0}code{font-size:.83em;font-family:ui-monospace,monospace;background:#e1eaf3;padding:2px 5px;border-radius:3px}pre{margin:0;padding:22px;overflow:auto;font:14px/1.8 ui-monospace,monospace}pre code{font:inherit;background:none;padding:0;color:inherit}.guide-code{margin:25px 0;background:#102b43;color:#d7e9fc;border-radius:6px;overflow:hidden}.code-bar{padding:7px 15px;border-bottom:1px solid #29465f;display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#b8d4eb}.code-bar button{background:transparent;color:#d7e9fc;border:0;min-height:40px;padding:8px 12px;cursor:pointer;border-radius:4px}.code-bar button:hover{background:#29465f}button:focus-visible,a:focus-visible{outline:3px solid #d15c26;outline-offset:3px}.table-scroll{overflow:auto}table{width:100%;border-collapse:collapse;font-size:16px;margin:25px 0}th,td{text-align:left;vertical-align:top;padding:14px 15px 14px 0;border-bottom:1px solid #d1dfea}th{color:#175fe6}footer{border-top:1px solid #d6e2ec;padding-top:22px;font-size:14px;color:#526a7b}@media(max-width:600px){body{font-size:17px}h1{font-size:36px}pre{font-size:12px;padding:16px}header{flex-direction:column;gap:3px}main{margin-top:25px}}@media print{body{background:white;font-size:11pt}header,.code-bar button{display:none}main{max-width:none;margin:0;padding:0}h1{font-size:25pt}h2{font-size:18pt;break-after:avoid}pre{white-space:pre-wrap;font-size:9pt}.guide-code{break-inside:avoid}table{font-size:10pt}a{color:inherit}}</style></head><body><header><a href="../apresentacao/">← Voltar aos slides</a><a href="08-desafios.md">Versão Markdown</a></header><main><h1>Desafios, diagnóstico e recuperação</h1>
+<p>Tempo: 10 minutos ao final, ou atividades de aprofundamento. Execute na raiz do pacote e use somente os recursos do exercício.</p>
+<h2>1. O banco está no endereço errado</h2>
+<p>Introduza a falha:</p>
+<div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>export DB_HOST=localhost
+docker compose -f compose.app.yaml up -d --force-recreate api
+docker compose -f compose.app.yaml ps -a
+docker compose -f compose.app.yaml logs --tail 30 api</code></pre></div>
+<p>Resultado esperado: a API procura o PostgreSQL no próprio container e aguarda até falhar a inicialização. <code>config</code> permite observar o valor resolvido. Alterar variável no shell não modifica um processo já em execução; por isso recriamos a API.</p>
+<p>Recuperação:</p>
+<div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>unset DB_HOST
+docker compose -f compose.app.yaml up -d --force-recreate --wait api
+docker compose -f compose.app.yaml up -d --wait web</code></pre></div>
+<p>Se você também gravou <code>DB_HOST=localhost</code> em <code>.env</code>, remova ou corrija essa linha para <code>db</code>; <code>unset</code> só remove a variável do shell.</p>
+<h2>2. A porta do navegador está errada</h2>
+<p>Abra <code>http://localhost:8089</code>, mantendo a configuração padrão. Compare com a saída:</p>
+<div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>docker compose -f compose.app.yaml ps
+docker compose -f compose.app.yaml port web 8080</code></pre></div>
+<p>Recuperação: use a porta publicada exibida, normalmente <code>http://localhost:8088</code>. Não altere código Go para corrigir um endereço digitado errado no navegador.</p>
+<h2>3. Um mount ocultou os arquivos</h2>
+<p>A IDE sem bind e a IDE com bind podem apresentar conteúdos diferentes em <code>/workspace</code>. Compare:</p>
+<div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>./scripts/ide.sh estado</code></pre></div>
+<p>Inspecione o container específico para verificar Mounts. A montagem não mescla automaticamente os diretórios. Não usar <code>rm -rf</code> para tentar fazer os arquivos ocultos reaparecerem.</p>
+<h2>4. A senha mudou, mas o volume continuou</h2>
+<p>As variáveis <code>POSTGRES_USER</code>, <code>POSTGRES_PASSWORD</code> e <code>POSTGRES_DB</code> da imagem PostgreSQL inicializam um diretório de dados vazio. Alterar a variável depois não muda automaticamente um banco já inicializado.</p>
+<p>Recuperação para a oficina: voltar às credenciais com as quais aquele volume foi criado. Para descartar intencionalmente todos os recados e inicializar de novo, usar <code>down -v</code> no projeto da aplicação e subir novamente. Em dados reais, atualizar a credencial no banco com procedimento apropriado em vez de apagar o volume.</p>
+<h2>5. A imagem do colega não foi usada</h2>
+<p>Confirme a referência resolvida:</p>
+<div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>docker compose -f compose.app.yaml -f compose.hub.yaml config --images</code></pre></div>
+<p>Confira <code>API_IMAGE</code>, execute <code>pull api</code> e use <code>up --no-build</code>. A configuração base também descreve um build; omitir o cuidado pode acabar executando código local em vez de validar a publicação.</p>
+<h2>6. Limpeza específica</h2>
+<p>Encerrar sem apagar o banco:</p>
+<div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>docker compose down
+docker compose -f compose.app.yaml down
+./scripts/ide.sh parar</code></pre></div>
+<p>Limpar os containers e o volume do laboratório básico, se ainda existirem:</p>
+<div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>docker rm -f fs-lab
+docker volume rm dados-lab</code></pre></div>
+<p>Cada comando pode informar recurso inexistente caso já tenha sido removido; isso não exige limpeza global. Para apagar somente os dados do mural:</p>
+<div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>docker compose -f compose.app.yaml down -v</code></pre></div>
+<p>Não usar comandos globais de prune para encerrar a oficina em uma máquina que pode ter outros projetos.</p>
+<h2>7. Checklist de explicação</h2>
+<ul><li>Onde o processo executa e qual é o principal?</li><li>Em qual camada ou mount o arquivo foi escrito?</li><li>Qual operação removeu ou preservou esse recurso?</li><li>Quem faz a chamada de rede e o que localhost significa ali?</li><li>A imagem consumida foi construída localmente ou baixada?</li><li>Que configuração outra pessoa precisa para executar a mesma aplicação?</li></ul>
+<p>Fontes: <a href="https://docs.docker.com/reference/cli/docker/compose/down/">Compose down</a>, <a href="https://docs.docker.com/compose/how-tos/networking/">rede</a>, <a href="https://hub.docker.com/_/postgres">PostgreSQL</a>.</p><footer>Oficina Docker · Material de acompanhamento</footer></main><script>document.querySelectorAll('.code-bar button').forEach(button=>button.addEventListener('click',async()=>{const text=button.closest('.guide-code').querySelector('code').textContent;try{if(navigator.clipboard&&window.isSecureContext)await navigator.clipboard.writeText(text);else{const input=document.createElement('textarea');input.value=text;document.body.append(input);input.select();if(!document.execCommand('copy'))throw Error();input.remove();}button.textContent='Copiado';setTimeout(()=>button.textContent='Copiar',1800);}catch{button.textContent='Selecione o texto';}}));</script></body></html>

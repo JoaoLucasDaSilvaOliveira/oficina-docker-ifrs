@@ -1,0 +1,49 @@
+name: oficina-mural
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-oficina}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-oficina-local}
+      POSTGRES_DB: ${POSTGRES_DB:-oficina}
+    volumes:
+      - dados-postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", 'pg_isready -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"']
+      interval: 3s
+      timeout: 3s
+      retries: 20
+      start_period: 5s
+  api:
+    build:
+      context: ./exemplos/mural/api
+      args:
+        APP_VERSION: ${API_VERSION:-1.0.0}
+    image: oficina/api:${API_VERSION:-1.0.0}
+    environment:
+      PORT: "8080"
+      PGHOST: ${DB_HOST:-db}
+      PGPORT: "5432"
+      PGUSER: ${POSTGRES_USER:-oficina}
+      PGPASSWORD: ${POSTGRES_PASSWORD:-oficina-local}
+      PGDATABASE: ${POSTGRES_DB:-oficina}
+      PGSSLMODE: disable
+    depends_on:
+      db:
+        condition: service_healthy
+    read_only: true
+    tmpfs:
+      - /tmp
+  web:
+    build: ./exemplos/mural/frontend
+    image: oficina/web:1.0.0
+    ports:
+      - "${APP_BIND:-127.0.0.1}:${APP_PORT:-8088}:8080"
+    depends_on:
+      api:
+        condition: service_healthy
+    read_only: true
+    tmpfs:
+      - /tmp
+volumes:
+  dados-postgres:

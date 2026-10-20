@@ -1,0 +1,13 @@
+name: oficina-ide
+services:
+  ide:
+    image: oficina/ide:1.0.0
+    environment:
+      XDG_RUNTIME_DIR: /tmp/runtime-aluno
+      WAYLAND_DISPLAY: wayland-0
+      OFICINA_GUI_BACKEND: wayland
+    volumes:
+      - type: bind
+        source: ${OFICINA_WAYLAND_SOCKET:?Execute OFICINA_GUI_BACKEND=wayland scripts/ide.sh preparar}
+        target: /tmp/runtime-aluno/wayland-0
+    shm_size: 256m

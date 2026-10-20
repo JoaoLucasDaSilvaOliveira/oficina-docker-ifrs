@@ -1,0 +1,18 @@
+name: oficina-ide
+services:
+  ide:
+    image: oficina/ide:1.0.0
+    environment:
+      DISPLAY: ${DISPLAY:?Execute scripts/ide.sh preparar na sessão gráfica}
+      XAUTHORITY: /tmp/oficina.xauth
+      OFICINA_GUI_BACKEND: x11
+    volumes:
+      - type: bind
+        source: /tmp/.X11-unix
+        target: /tmp/.X11-unix
+        read_only: true
+      - type: bind
+        source: ${OFICINA_XAUTH:?Execute scripts/ide.sh preparar}
+        target: /tmp/oficina.xauth
+        read_only: true
+    shm_size: 256m
