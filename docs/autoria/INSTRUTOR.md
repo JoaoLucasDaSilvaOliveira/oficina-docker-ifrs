@@ -35,12 +35,12 @@ Esta preparação não publica o site: o instrutor decide quando executar o work
 ```bash
 docker build -t joaolsodocker/oficina-go:1.0.0 exemplos/go-soma
 docker build -t joaolsodocker/oficina-vue:1.0.0 exemplos/vue-vite
-docker build -f exemplos/ide/Dockerfile -t joaolsodocker/oficina-ide:1.0.0 .
+docker build -t joaolsodocker/oficina-ide:1.0.0 exemplos/ide
 docker build -t joaolsodocker/oficina-api:1.0.0 exemplos/mural/api
 docker build -t joaolsodocker/oficina-web:1.0.0 exemplos/mural/frontend
 ```
 
-A IDE usa contexto da raiz por causa de suas receitas de apoio. A turma escolhe o UID/GID efetivo com `--user`, sem reconstruir uma imagem por pessoa. O runtime gráfico fica em tmpfs com UID/GID e modo 0700. O editor abre `/workspace` na primeira experiência; com HOME montado, abre `/host-home`.
+A IDE usa somente a pasta `exemplos/ide` como contexto. Dentro dessa pasta, o comando equivalente é `docker build -t joaolsodocker/oficina-ide:1.0.0 .`. A imagem inclui sua própria receita para leitura durante a oficina, sem depender das fontes do mural ou do Dockerfile dos slides. A turma escolhe o UID/GID efetivo com `--user`, sem reconstruir uma imagem por pessoa. O runtime gráfico fica em tmpfs com UID/GID e modo 0700. O editor abre `/workspace` na primeira experiência; com HOME montado, abre `/host-home`.
 
 O programa da imagem Go deve ser o mesmo do `main.go` oferecido no site. O Vue é o template original; a diferença entre os dois acessos está na forma de executar, não no conteúdo da tela. O mural fica reservado ao capítulo de Compose, usando imagens prontas.
 

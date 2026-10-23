@@ -14,9 +14,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && chown aluno:aluno /workspace /tmp/runtime-aluno \
     && chmod 700 /tmp/runtime-aluno
 RUN chmod 1777 /workspace
-COPY exemplos/mural /opt/oficina/mural
-COPY exemplos/ide/Dockerfile /opt/oficina/receitas/ide.Dockerfile
-COPY Dockerfile /opt/oficina/receitas/slides.Dockerfile
+COPY Dockerfile /opt/oficina/receitas/ide.Dockerfile
 USER aluno
 ENV HOME=/tmp XDG_RUNTIME_DIR=/tmp/runtime-aluno
 WORKDIR /workspace

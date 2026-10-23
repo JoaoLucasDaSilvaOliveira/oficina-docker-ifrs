@@ -119,3 +119,7 @@ As imagens foram preparadas localmente. Nenhum login ou push foi executado.
 O ZIP Compose da IDE inclui README-IDE.md com comandos completos e independentes para X11 sem HOME, com HOME e alternativa Wayland. Não exige exports prévios nem edição do YAML. Os campos de autorização usam automaticamente XAUTHORITY da sessão, com fallback HOME/.Xauthority. Os valores UID/GID e hostname são calculados no comando. As mensagens de preenchimento :? foram removidas.
 
 `python testes/compose-ide.py` validou os comandos extraídos do ZIP, o fallback sem XAUTHORITY e UID/GID diferentes de1000, sem criar containers. Um container descartável iniciado pelo Compose acessou a sessão X11 real com xdpyinfo; container e rede de QA foram removidos. A sessão gráfica específica do laboratório continua sendo conferida pelo instrutor antes da aula.
+
+## Build isolado da IDE — 23/10/2026
+
+Removidas as cópias antigas do mural e da receita dos slides. A IDE mantém somente sua própria receita, copiada do contexto local. Build executado com sucesso dentro de exemplos/ide usando docker build -t joaolsodocker/oficina-ide:1.0.0 .. O container descartável executou code --version e confirmou a receita em /opt/oficina/receitas/ide.Dockerfile, sem os materiais antigos. O ZIP da receita foi comparado com o Dockerfile atualizado.
