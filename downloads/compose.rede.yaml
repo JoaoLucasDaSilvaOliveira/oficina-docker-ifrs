@@ -1,0 +1,13 @@
+# Aprofundamento opcional: web e banco deixam de compartilhar a mesma rede.
+# Use junto com compose.app.yaml.
+services:
+  db:
+    networks: [dados]
+  api:
+    networks: [entrada, dados]
+  web:
+    networks: [entrada]
+networks:
+  entrada: {}
+  dados:
+    internal: true

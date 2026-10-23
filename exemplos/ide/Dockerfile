@@ -2,7 +2,7 @@ FROM debian:bookworm-slim
 ARG LOCAL_UID=1000
 ARG LOCAL_GID=1000
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    ca-certificates curl gnupg xauth x11-apps dbus-x11 libasound2 libgbm1 libxshmfence1 \
+    ca-certificates curl gnupg x11-utils dbus-x11 libasound2 libgbm1 libxshmfence1 \
     && install -d /etc/apt/keyrings \
     && curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor -o /etc/apt/keyrings/microsoft.gpg \
     && printf 'deb [arch=%s signed-by=/etc/apt/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/code stable main\n' "$(dpkg --print-architecture)" > /etc/apt/sources.list.d/vscode.list \
@@ -13,8 +13,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && mkdir -p /workspace /tmp/runtime-aluno \
     && chown aluno:aluno /workspace /tmp/runtime-aluno \
     && chmod 700 /tmp/runtime-aluno
-COPY abrir-ide /usr/local/bin/abrir-ide
-RUN chmod +x /usr/local/bin/abrir-ide
+RUN chmod 1777 /workspace
+COPY exemplos/mural /opt/oficina/mural
+COPY exemplos/ide/Dockerfile /opt/oficina/receitas/ide.Dockerfile
+COPY Dockerfile /opt/oficina/receitas/slides.Dockerfile
 USER aluno
+ENV HOME=/tmp XDG_RUNTIME_DIR=/tmp/runtime-aluno
 WORKDIR /workspace
-CMD ["sleep", "infinity"]
+CMD ["code", "--no-sandbox", "--disable-gpu", "--ozone-platform=x11", "--new-window", "--wait", "."]

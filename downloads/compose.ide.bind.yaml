@@ -1,0 +1,10 @@
+# Segunda experiência: a IDE abre a pasta pessoal do usuário no host.
+services:
+  ide:
+    working_dir: /host-home
+    volumes:
+      - type: bind
+        source: ${HOME:?Sessão sem HOME}
+        target: /host-home
+        bind:
+          create_host_path: false

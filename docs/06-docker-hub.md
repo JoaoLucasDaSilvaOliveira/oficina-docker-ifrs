@@ -1,64 +1,78 @@
-# Publicação e troca pelo Docker Hub
+# Publicar e executar a imagem do colega
 
-Tempo: 15 minutos. Execute na raiz do pacote, no host. Substitua os nomes de exemplo pelo namespace real; os scripts não fazem login ou publicação por você.
+O Hub recebe a imagem já construída, não apenas o Dockerfile. Os fontes são necessários durante o build; a execução do colega usa os arquivos e a configuração da imagem pronta.
 
-## 1. Construir e identificar
+## 1. Nome, namespace e tag
 
-```bash
-docker build -t oficina/api:1.0.0 exemplos/mural/api
-docker image ls
-```
+`joaolsodocker/oficina-go:1.0.0` reúne namespace, repositório e tag. Imagens oficiais como Alpine ficam no namespace especial library, que pode ser omitido: `alpine:3.22` corresponde a `docker.io/library/alpine:3.22`.
 
-A imagem existe localmente. Seu nome local não a publica em lugar nenhum.
+Uma tag local curta não é automaticamente o repositório da sua conta. Para publicar, marque a imagem no seu namespace.
 
-## 2. Fazer login e publicar
+## 2. Publicar o programa Go
+
+Depois de construir sua imagem `minha-soma:1.0.0`:
 
 ```bash
 docker login
-docker tag oficina/api:1.0.0 SEUUSUARIO/oficina-api:1.0.0
-docker push SEUUSUARIO/oficina-api:1.0.0
+docker tag minha-soma:1.0.0 SEUUSUARIO/oficina-go:1.0.0
+docker push SEUUSUARIO/oficina-go:1.0.0
 ```
 
-Prepare o repositório no Docker Hub e suas permissões. A conta deve conseguir escrever no namespace escolhido. O fluxo de login pode pedir autorização no navegador; isso é autenticação do registry, não a interface da IDE.
+Substitua SEUUSUARIO por sua conta ou organização no Docker Hub. A pessoa executa login e push explicitamente; nenhum script de materiais publica imagens ou compartilha credenciais.
 
-Resultado esperado: o push envia as camadas ausentes e apresenta o digest do artefato. Uma tag pode apontar a outro conteúdo no futuro. `latest` é somente uma tag convencional.
-
-## 3. Executar a API publicada por um colega
-
-O colega também recebe este pacote, pois precisa do frontend, da configuração e do banco. Se ainda não construiu o frontend:
+## 3. Executar a imagem do colega
 
 ```bash
-docker compose -f compose.app.yaml build web
+docker pull COLEGA/oficina-go:1.0.0
+docker run --rm COLEGA/oficina-go:1.0.0
 ```
 
-Defina a imagem publicada e aplique o overlay:
+Troque COLEGA pelo namespace escolhido. A mensagem impressa confirma a versão do programa recebido. O colega não precisa baixar seu fonte, Dockerfile ou compilador.
+
+O mesmo vale para o Vue:
 
 ```bash
+docker tag meu-vue:1.0.0 SEUUSUARIO/oficina-vue:1.0.0
+docker push SEUUSUARIO/oficina-vue:1.0.0
+```
+
+Em outra máquina, ou depois de o colega publicar:
+
+```bash
+docker run -d --name front-colega \
+  -p 127.0.0.1:8083:80 \
+  COLEGA/oficina-vue:1.0.0
+```
+
+Abra `http://localhost:8083`. Se a imagem ainda não estiver no daemon local, docker run tenta baixá-la. O nome da tag deve ser compatível com a que foi publicada.
+
+## 4. Imagem da API no Compose
+
+No aprofundamento do mural, a configuração permite selecionar outra imagem compatível da API. Isso não exige mostrar seu código ao restante da turma. Baixe os YAMLs do [Compose do mural](../downloads/compose-mural.zip), extraídos em HOME/oficina-docker:
+
+```bash
+cd "$HOME/oficina-docker"
 export API_IMAGE=COLEGA/oficina-api:1.0.0
+docker compose -f compose.app.yaml -f compose.hub.yaml config --images
 docker compose -f compose.app.yaml -f compose.hub.yaml pull api
-docker compose -f compose.app.yaml -f compose.hub.yaml \
-  up -d --no-build --wait
+docker compose -f compose.app.yaml -f compose.hub.yaml up -d --wait
 ```
 
-`compose.hub.yaml` substitui a referência de imagem da API. `--no-build` impede construir a API local por engano, mesmo com a configuração de build herdada do arquivo base. As imagens locais do frontend e do banco devem estar disponíveis ou ser recuperáveis.
+A referência precisa ser uma API com o mesmo contrato esperado pelo frontend e pelo banco. Não use a imagem da soma nesse campo: ela é um programa que termina, e não um servidor HTTP de recados.
 
-Abra o mural. O colega executa o artefato publicado, mas mantém seu próprio volume e seus próprios recados.
-
-## 4. Voltar ao build local
+Para voltar ao padrão:
 
 ```bash
 unset API_IMAGE
-docker compose -f compose.app.yaml up -d --build --wait
+docker compose -f compose.app.yaml up -d --wait
 ```
+
+Se também definiu API_IMAGE em `.env`, ajuste o arquivo. O padrão é `joaolsodocker/oficina-api:1.0.0`.
 
 ## 5. O que viaja
 
-O push envia a imagem marcada: binário, arquivos incluídos e configuração. Não envia automaticamente o volume PostgreSQL, as credenciais locais, o Compose ou as outras imagens da aplicação. Distribuir uma API requer também documentar seu contrato de execução.
+Push envia os arquivos e a configuração da imagem selecionada. Não envia volumes do banco, bind mounts, variáveis do shell, YAMLs ou outras imagens. No multi-stage, fontes e compiladores não entram no estágio final se você não os copiar.
 
-## 6. Aprofundamento: plataformas e digests
+Tags são referências mutáveis. Digest identifica conteúdo. `latest` é uma tag convencional, não uma seleção automática da versão mais recente. A imagem precisa ser compatível com a arquitetura e o ambiente do destinatário; builds multi-platform pertencem ao aprofundamento do instrutor.
 
-Os computadores do laboratório devem construir uma plataforma compatível com seus colegas. Uma imagem construída apenas para amd64 não é automaticamente multi-plataforma. Para distribuição entre plataformas diferentes, estudar `docker buildx build --platform linux/amd64,linux/arm64 --push`, os requisitos do builder e os estágios Go correspondentes antes de usá-lo.
-
-O digest identifica conteúdo. Para repetibilidade, registrar a referência com digest e o Compose usado, além da tag de leitura humana.
-
-Fontes: [build, tag e push](https://docs.docker.com/get-started/docker-concepts/building-images/build-tag-and-publish-an-image/), [pull por digest](https://docs.docker.com/reference/cli/docker/image/pull/), [multi-plataforma](https://docs.docker.com/build/building/multi-platform/).
+Fontes: [build, tag e push](https://docs.docker.com/get-started/docker-concepts/building-images/build-tag-and-publish-an-image/), [pull e digests](https://docs.docker.com/reference/cli/docker/image/pull/).

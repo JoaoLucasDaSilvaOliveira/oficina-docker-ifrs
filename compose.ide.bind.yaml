@@ -1,7 +1,10 @@
-# Overlay para a segunda experiência: agora a IDE vê os arquivos do projeto.
+# Segunda experiência: a IDE abre a pasta pessoal do usuário no host.
 services:
   ide:
+    working_dir: /host-home
     volumes:
       - type: bind
-        source: ./exemplos/mural
-        target: /workspace
+        source: ${HOME:?Sessão sem HOME}
+        target: /host-home
+        bind:
+          create_host_path: false

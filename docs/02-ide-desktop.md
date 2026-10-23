@@ -1,99 +1,130 @@
-# IDE desktop executada dentro do container
+# IDE desktop com imagens do Docker Hub
 
-Tempo: 20 minutos. O objetivo é abrir **uma janela do VS Code desktop no Linux**, com o processo do editor dentro do container. A demonstração não usa code-server, editor web, VNC ou IDE no navegador.
+Execute no Bash do terminal da sessão gráfica, em qualquer diretório. Antes desta experiência, baixe main.go para HOME/oficina-docker/go-soma/main.go. Primeiro experimentamos a IDE; sua receita será lida no capítulo de imagens. A turma não recebe o repositório nem executa scripts auxiliares.
 
-## 1. Entender a conexão
-
-O container inclui o editor e suas bibliotecas. O host já possui uma sessão gráfica. Para exibir a janela, a aplicação precisa alcançar essa sessão por X11/XWayland ou Wayland, com autorização e permissões apropriadas.
-
-Compartilhar sockets gráficos é diferente de montar a pasta do projeto. A primeira experiência tem integração gráfica, mas **sem diretório do projeto do host montado**.
-
-Linux Mint foi informado como sistema provável. A versão ou o nome da distribuição, isoladamente, não garantem o tipo de sessão.
-
-## 2. Caminho principal: X11 ou XWayland
-
-No terminal **da sessão gráfica local**, na raiz do pacote:
+## 1. Baixar a imagem pronta
 
 ```bash
-echo "$XDG_SESSION_TYPE"
-echo "$DISPLAY"
-./scripts/ide.sh preparar
-./scripts/ide.sh abrir
+docker pull joaolsodocker/oficina-ide:1.0.0
 ```
 
-`preparar` constrói `oficina/ide:1.0.0` com UID/GID do usuário, extrai a autorização X11 usando uma ferramenta dentro da imagem e grava os arquivos locais em `.runtime/`. Não exige `xauth` instalado no host, não usa `xhost +`, não usa `--privileged` e não monta o socket Docker.
+O instrutor constrói e publica essa imagem antes da oficina. Não é necessário ter Dockerfile, pasta exemplos/ide, VS Code ou SDK no computador do participante.
 
-Resultado esperado: uma janela VS Code abre em `/workspace`. O terminal aguarda enquanto a janela está em uso. Crie `recado.txt` e escreva algo. Feche a janela e execute:
+## 2. Abrir sem acesso à pasta pessoal: X11 ou XWayland
 
 ```bash
-./scripts/ide.sh estado
-./scripts/ide.sh abrir
+docker run -d --name ide \
+  --user "$(id -u):$(id -g)" \
+  --hostname "$(hostname)" \
+  -e DISPLAY -e XAUTHORITY=/tmp/oficina.xauth \
+  --mount type=bind,src=/tmp/.X11-unix,dst=/tmp/.X11-unix,readonly \
+  --mount "type=bind,src=${XAUTHORITY:-$HOME/.Xauthority},dst=/tmp/oficina.xauth,readonly" \
+  --tmpfs "/tmp/runtime-aluno:uid=$(id -u),gid=$(id -g),mode=0700" \
+  --shm-size=256m \
+  joaolsodocker/oficina-ide:1.0.0
 ```
 
-O arquivo permanece. A imagem usa `sleep infinity` como processo principal e inicia a IDE com `exec`; fechar a IDE não encerra automaticamente esse processo principal.
+A janela do VS Code abre em /workspace, dentro do container. Tente encontrar o main.go baixado no computador: ele não está disponível, pois HOME não foi montado. Crie /workspace/recado.txt para comparar o armazenamento da instância com o arquivo do host.
 
-## 3. Ver os comandos que o script organiza
+| Argumento | Função |
+| --- | --- |
+| `--user "$(id -u):$(id -g)"` | Executa com o UID/GID do usuário real, usando a imagem compartilhada sem rebuild por pessoa. |
+| `--hostname "$(hostname)"` | Permite encontrar as entradas locais de autorização X11 do host. |
+| `-e DISPLAY` | Copia o endereço do display da sessão para o container. |
+| `-e XAUTHORITY=/tmp/oficina.xauth` | Informa onde o arquivo de autorização aparece dentro do container. |
+| Mounts somente leitura | Disponibilizam socket X11 e autorização. O fallback HOME/.Xauthority só funciona se esse arquivo existir; XAUTHORITY pode apontar para outro caminho. |
+| `--tmpfs ...` | Prepara o runtime gráfico com dono e permissões para o UID escolhido, mesmo se diferente de 1000. |
+| `--shm-size=256m` | Define a capacidade de memória compartilhada em /dev/shm. |
 
-Após preparar o caminho X11:
+O HOME interno da imagem é /tmp para guardar configurações do editor com diferentes UIDs. Ele é independente do HOME expandido pelo shell do host nos argumentos. O WORKDIR padrão é /workspace e o CMD abre ponto, isto é, o diretório de trabalho atual.
+
+## 3. Observar e reabrir
 
 ```bash
-docker compose --env-file .runtime/grafico.env -f compose.ide.yaml up -d
-docker compose --env-file .runtime/grafico.env -f compose.ide.yaml exec ide sh
+docker ps
+docker top ide
+docker exec -it ide sh
 ```
 
-Dentro do container:
+Dentro do container, execute pwd, id e ls -la /workspace, depois exit. Feche a janela. O comando code --wait termina e o container para. Confira e reabra o mesmo:
 
 ```bash
-pwd
-id
-ls -la /workspace
-abrir-ide
+docker ps -a
+docker start ide
 ```
 
-O comando `abrir-ide` chama o executável `code`, com flags registradas em `exemplos/ide/abrir-ide`. Nesta imagem local, `--no-sandbox` desativa a sandbox do Electron para compatibilidade com o ambiente do container; isso não é uma necessidade geral do Docker. O editor roda como o usuário `aluno`, alinhado ao UID/GID do host. `--disable-gpu` prioriza renderização por software para não depender da GPU do laboratório.
+O recado da camada permanece no mesmo container. Remover o container elimina essa camada, mas não a imagem.
 
-Os comandos Docker dos demais exercícios continuam no terminal do host; não é preciso instalar Docker nem disponibilizar seu socket dentro da IDE.
+## 4. Agora acessar a pasta pessoal do computador
 
-## 4. Mostrar o efeito da remoção
-
-Use somente o arquivo descartável criado na primeira experiência:
+Feche a IDE e use somente os arquivos descartáveis da primeira experiência. A primeira linha remove aquele container.
 
 ```bash
-./scripts/ide.sh parar
-./scripts/ide.sh abrir
+docker rm -f ide
+docker run -d --name ide \
+  --user "$(id -u):$(id -g)" \
+  --hostname "$(hostname)" \
+  -e DISPLAY -e XAUTHORITY=/tmp/oficina.xauth \
+  --mount type=bind,src=/tmp/.X11-unix,dst=/tmp/.X11-unix,readonly \
+  --mount "type=bind,src=${XAUTHORITY:-$HOME/.Xauthority},dst=/tmp/oficina.xauth,readonly" \
+  --tmpfs "/tmp/runtime-aluno:uid=$(id -u),gid=$(id -g),mode=0700" \
+  --mount "type=bind,src=$HOME,dst=/host-home" \
+  --workdir /host-home \
+  --shm-size=256m \
+  joaolsodocker/oficina-ide:1.0.0
 ```
 
-O `recado.txt` da camada do container anterior não estará no novo container. A imagem do editor continua existindo.
+A diferença é o bind mount de **toda a pasta pessoal**, sem supor uma pasta da oficina:
 
-## 5. Agora montar o projeto
+```text
+HOME do computador → /host-home no container
+```
+
+--workdir muda o diretório para /host-home. Como o CMD abre ponto, a IDE passa a abrir a pasta pessoal. O Linux mantém as permissões do usuário escolhido; não é necessário executar como root. A raiz / do computador não é montada.
+
+Exemplo: um arquivo HOME/Documentos/recado.txt aparece em /host-home/Documentos/recado.txt. É o mesmo arquivo, com leitura e escrita; não é uma cópia. Alterações feitas pelo editor afetam os arquivos reais. Ao remover o container, os arquivos desse bind permanecem no host.
+
+Agora abra `/host-home/oficina-docker/go-soma/main.go` na IDE. É o arquivo baixado antes, sem cópia. Altere um dos números ou a mensagem impressa e salve.
+
+Para executar esse fonte sem Go instalado no computador, no terminal do host:
 
 ```bash
-./scripts/ide.sh com-projeto
+docker run --rm --user "$(id -u):$(id -g)" \
+  --mount "type=bind,src=$HOME/oficina-docker/go-soma,dst=/src,readonly" \
+  -w /src -e GOCACHE=/tmp/go-cache \
+  golang:1.27.3-alpine go run main.go
 ```
 
-Esse comando recria a IDE com o overlay `compose.ide.bind.yaml`, montando `exemplos/mural` em `/workspace`. Edite um arquivo do projeto pelo editor e observe no host. Os dados montados sobrevivem à remoção do container.
+O bind entrega o fonte ao compilador do container. `go run main.go` compila e executa esse arquivo; não exige go.mod neste exercício simples. O container é removido ao terminar. O arquivo editado continua no host. Os caches ficam em /tmp dentro do container, com permissões do UID escolhido.
 
-## 6. Alternativa: Wayland nativo
+## 5. Alternativa Wayland nativo
 
-Se a sessão usa Wayland e você optar pela conexão nativa:
+Se optar por Wayland nativo, use este comando no lugar do X11. Não mantenha outro container chamado ide. A primeira experiência continua sem pasta pessoal montada.
 
 ```bash
-OFICINA_GUI_BACKEND=wayland ./scripts/ide.sh preparar
-./scripts/ide.sh abrir
+docker run -d --name ide \
+  --user "$(id -u):$(id -g)" \
+  -e XDG_RUNTIME_DIR=/tmp/runtime-aluno \
+  -e WAYLAND_DISPLAY=wayland-0 \
+  --mount "type=bind,src=$XDG_RUNTIME_DIR/$WAYLAND_DISPLAY,dst=/tmp/runtime-aluno/wayland-0" \
+  --tmpfs "/tmp/runtime-aluno:uid=$(id -u),gid=$(id -g),mode=0700" \
+  --shm-size=256m \
+  joaolsodocker/oficina-ide:1.0.0 \
+  code --no-sandbox --disable-gpu --ozone-platform=wayland --new-window --wait .
 ```
 
-O script registra o socket em `.runtime/grafico.env` e escolhe `compose.ide.wayland.yaml`. Dentro do container ele monta o socket em `/tmp/runtime-aluno/wayland-0`, define `XDG_RUNTIME_DIR` e `WAYLAND_DISPLAY`, e inicia o editor com `--ozone-platform=wayland`.
+Se WAYLAND_DISPLAY já for um caminho absoluto, use-o diretamente como origem do mount. Para a segunda experiência, acrescente --mount "type=bind,src=$HOME,dst=/host-home" e --workdir /host-home antes da imagem. O argumento final ponto seguirá esse diretório.
 
-Para inspecionar manualmente esse arranjo, substitua `compose.ide.yaml` por `compose.ide.wayland.yaml` nos comandos manuais anteriores. Não misture os arquivos base de X11 e Wayland no mesmo comando.
+## 6. Diagnóstico
 
-## 7. Diagnóstico gráfico
+```bash
+docker ps -a
+docker logs --tail 50 ide
+docker inspect ide
+```
 
-- `DISPLAY` ausente: executar no terminal da sessão gráfica, não numa conexão que não encaminha o display.
-- Arquivo Xauthority ausente: `XAUTHORITY` pode apontar para o arquivo real da sessão; o fallback é a `.Xauthority` do usuário. Definir `XAUTHORITY` antes de preparar se necessário.
-- Sessão reiniciada ou autorização mudou: fechar o container e preparar novamente. Arquivos de autorização não fazem parte do pacote de distribuição.
-- Janela não abre: consultar a saída do comando `abrir-ide`, conferir sessão, permissões e existência do socket. O instrutor ajustará a integração no laboratório conforme o ambiente real.
-- Permissão no projeto: conferir `id` no host e no container e as permissões da pasta. Ao mudar o usuário do laboratório, reconstruir a imagem com `preparar`.
+Confira DISPLAY, arquivo de XAUTHORITY e sockets da sessão. Variáveis não são comandos: use echo "$DISPLAY" e echo "$XAUTHORITY". A sintaxe ${VAR:-padrao} é de Bash, não Fish. Os recursos gráficos mudam ao reiniciar a sessão; recrie o container de demonstração se necessário. Não desative globalmente a autorização X11 com xhost +.
 
-Os sockets e arquivos de autorização são locais à sessão. Nenhum comando gráfico foi executado contra o display do laboratório durante a preparação deste material.
+A mesma ideia de ferramentas no Docker será usada com Vue/Vite. Mais tarde, a configuração da IDE poderá ser traduzida para Compose. A receita da IDE fica disponível para leitura no capítulo de imagens; o primeiro build da turma usa o programa de soma, sem o código do mural.
 
-Fontes: [X11 e autorização](https://www.x.org/guide/communication/), [Wayland](https://wayland.freedesktop.org/docs/html/apb.html), [VS Code Linux](https://code.visualstudio.com/docs/setup/linux), [CLI](https://code.visualstudio.com/docs/configure/command-line).
+Fontes: [bind mounts](https://docs.docker.com/engine/storage/bind-mounts/), [X11](https://www.x.org/guide/communication/), [VS Code CLI](https://code.visualstudio.com/docs/configure/command-line).

@@ -1,8 +1,0 @@
-#!/bin/sh
-set -eu
-# A sandbox do Electron é desativada apenas nesta imagem de demonstração local.
-# Não é necessário usar --privileged nem montar o socket do Docker.
-backend=${OFICINA_GUI_BACKEND:-x11}
-exec code --no-sandbox --disable-gpu --disable-dev-shm-usage \
-    --ozone-platform="$backend" --user-data-dir=/home/aluno/.config/oficina-code \
-    --new-window --wait /workspace "$@"

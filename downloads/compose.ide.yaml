@@ -1,0 +1,27 @@
+name: oficina-ide
+services:
+  ide:
+    image: joaolsodocker/oficina-ide:1.0.0
+    user: "${LOCAL_UID:?Exporte LOCAL_UID com id -u}:${LOCAL_GID:?Exporte LOCAL_GID com id -g}"
+    container_name: ide
+    hostname: ${HOST_HOSTNAME:?Exporte HOST_HOSTNAME com o hostname do computador}
+    init: true
+    environment:
+      DISPLAY: ${DISPLAY:?Execute no terminal da sessão gráfica local}
+      XAUTHORITY: /tmp/oficina.xauth
+    volumes:
+      - type: bind
+        source: /tmp/.X11-unix
+        target: /tmp/.X11-unix
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ${XAUTHORITY:?Exporte XAUTHORITY com o arquivo de autorização da sessão}
+        target: /tmp/oficina.xauth
+        read_only: true
+        bind:
+          create_host_path: false
+    shm_size: 256m
+    tmpfs:
+      - "/tmp/runtime-aluno:uid=${LOCAL_UID},gid=${LOCAL_GID},mode=0700"

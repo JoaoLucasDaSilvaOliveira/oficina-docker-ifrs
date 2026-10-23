@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 490" role="img" aria-labelledby="title desc">
+  <title id="title">Uma imagem compartilhada, duas camadas graváveis</title>
+  <desc id="desc">Os containers A e B usam as mesmas camadas de imagem, somente leitura. A tem um arquivo recado.txt em sua própria camada gravável; B tem uma camada gravável vazia.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M1 1 9 5 1 9" fill="none" stroke="#526a7b" stroke-width="1.5"/>
+    </marker>
+  </defs>
+  <g font-family="Arial, sans-serif" text-anchor="middle" fill="#102b43">
+    <text x="245" y="38" font-size="26" font-weight="600">Container A</text>
+    <text x="655" y="38" font-size="26" font-weight="600">Container B</text>
+
+    <g fill="#ffeadf" stroke="#cf622c" stroke-width="2">
+      <rect x="90" y="64" width="310" height="112" rx="4"/>
+      <rect x="500" y="64" width="310" height="112" rx="4"/>
+    </g>
+    <text x="245" y="104" font-size="23">Camada gravável</text>
+    <text x="655" y="104" font-size="23">Camada gravável</text>
+    <text x="245" y="144" font-family="monospace" font-size="20">/tmp/recado.txt</text>
+    <text x="655" y="144" font-size="20" fill="#526a7b">vazia</text>
+
+    <path d="M450 284V228H245V188M450 228H655V188" fill="none" stroke="#526a7b" stroke-width="2" marker-end="url(#arrow)"/>
+    <path d="M245 206V188" fill="none" stroke="#526a7b" stroke-width="2" marker-end="url(#arrow)"/>
+
+    <rect x="140" y="284" width="620" height="144" rx="4" fill="#e0ecff" stroke="#175fe6" stroke-width="2"/>
+    <path d="M140 332H760M140 380H760" stroke="#175fe6" stroke-width="1.5"/>
+    <text x="450" y="315" font-size="23">Aplicação</text>
+    <text x="450" y="363" font-size="23">Dependências</text>
+    <text x="450" y="411" font-size="23">Arquivos base</text>
+    <text x="450" y="474" font-size="25" font-weight="600">Imagem compartilhada · somente leitura</text>
+  </g>
+</svg>

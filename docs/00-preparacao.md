@@ -1,55 +1,61 @@
-# Preparação do laboratório
+# Começar a oficina
 
-O pacote foi preparado para Linux, com Linux Mint informado como sistema provável do laboratório em Osório. A versão e a sessão gráfica devem ser verificadas no local. Não é necessário instalar Go, Node, PostgreSQL ou uma IDE no host.
+Os slides são um site estático no GitHub Pages. Abra o endereço informado pelo instrutor. Não é necessário iniciar um container para acompanhar a apresentação, nem clonar o repositório.
 
-## 1. Verificar a base
+## 1. Laboratório
 
-No terminal do host:
+Docker Engine e plugin Compose devem estar disponíveis no Linux do laboratório. Go, Node, VS Code e PostgreSQL serão executados em containers. O navegador e o terminal pertencem à sessão gráfica do computador.
+
+Os comandos usam Bash. Se seu terminal for Fish, execute `bash` antes de copiar expressões como `${VAR:-padrao}`.
 
 ```bash
 docker version
 docker compose version
 docker info
 echo "$XDG_SESSION_TYPE"
+echo "$DISPLAY"
+echo "$XAUTHORITY"
 ```
 
-Resultado esperado: cliente e servidor Docker respondem; Compose mostra uma versão; o último comando costuma retornar `x11` ou `wayland`. Se o daemon não responder, resolver o acesso ao Docker com a equipe do laboratório antes da atividade. Não transformar a abertura da oficina em instalação de sistema.
+Cliente e servidor Docker precisam responder. A preparação das imagens e da sessão gráfica pertence ao instrutor, antes da aula.
 
-## 2. Disponibilizar o pacote
+## 2. Primeiro arquivo: uma soma em Go
 
-Cada dupla recebe a pasta completa, com seus arquivos ocultos de exemplo e os guias. Entre nela pelo terminal e mantenha esse terminal como **terminal do host**. O terminal aberto por `docker exec` será explicitamente identificado nos exercícios.
+Quando indicado, baixe [main.go](../downloads/main.go). Pelo gerenciador de arquivos, crie `HOME/oficina-docker/go-soma` e salve o arquivo nessa pasta como `main.go`. Confira que não foi acrescentado `.txt` ao nome.
 
-`.env.example` é uma referência; os padrões funcionam sem copiar o arquivo. O nome do projeto Compose da aplicação é `oficina-mural`, independente do nome da pasta. As portas de entrada padrão são 8080 para os materiais e 8088 para o mural.
-
-## 3. Preparar downloads antes da aula
+Esse programa é o mesmo da imagem `joaolsodocker/oficina-go:1.0.0`, que imprime uma soma e termina. Não precisa de banco, frontend ou módulo Go para o primeiro experimento.
 
 ```bash
-./scripts/precarregar.sh
+docker pull joaolsodocker/oficina-go:1.0.0
+docker run --rm joaolsodocker/oficina-go:1.0.0
 ```
 
-Esse script baixa a imagem pequena e a imagem Go, prepara o banco e constrói web, API e slides. A imagem da IDE é maior e tem preparação própria:
+O término do processo é o comportamento esperado. Não é um servidor aguardando conexões.
 
-```bash
-./scripts/ide.sh preparar
-```
+## 3. Downloads por etapa
 
-O primeiro build da IDE instala o VS Code **dentro da imagem**, usando o repositório assinado da Microsoft. Esse build precisa de internet. As demais imagens também são baixadas na primeira execução. Depois de preparadas, as atividades centrais podem usar o cache local; login e push/pull no Hub continuam exigindo acesso ao registry.
+Os slides mostram o conceito e oferecem o comando em uma janela própria. O catálogo Materiais reúne os arquivos de consulta. Baixe somente o que o exercício precisa, sem clonar o projeto inteiro.
 
-## 4. Abrir o material e confirmar a aplicação
+| Etapa | Download | Destino |
+| --- | --- | --- |
+| IDE e Go | main.go | HOME/oficina-docker/go-soma/main.go |
+| Vue/Vite | vue-vite.zip | Extrair em HOME/oficina-docker; cria vue-vite/ |
+| Imagens Go | go-receitas.zip | Extrair em HOME/oficina-docker; acrescenta receitas em go-soma/ sem alterar main.go |
+| Recuperação Go | go-soma.zip | Projeto completo opcional; pode substituir a edição de main.go |
+| Compose IDE | compose-ide.zip | Extrair em HOME/oficina-docker; cria três YAMLs |
+| Compose mural | compose-mural.zip | Extrair em HOME/oficina-docker; cria três YAMLs |
+| Leitura da IDE | receitas-dockerfile.zip | Extrair em HOME/oficina-docker; cria receitas/ |
 
-```bash
-docker compose up -d --build
-docker compose -f compose.app.yaml up -d --build --wait
-```
+O download principal do build Go contém somente receitas, preservando o arquivo editado. Se usar o projeto completo de recuperação `go-soma.zip`, guarde suas alterações antes de extrair sobre a pasta existente. Não crie diretórios duplicados como `vue-vite/vue-vite`.
 
-Abra os materiais em `http://localhost:8080` e o mural em `http://localhost:8088`. Publique um recado de teste. A apresentação contém notas pelo botão Notas e atalhos de teclado; os botões de simulação não executam comandos.
+## 4. IDE nativa
 
-## 5. Preparar a troca de imagens
+A imagem da IDE abre VS Code no desktop, e não uma página web. Primeiro ela não enxerga sua pasta pessoal. Depois um bind mount de HOME para `/host-home` permite encontrar e editar o `main.go` baixado.
 
-Cada pessoa que publicar deve ter conta e namespace próprios no Docker Hub. Faça o login interativo antes da etapa de publicação, sem compartilhar senha com a turma.
+A primeira execução já compartilha os recursos da sessão gráfica. Isso permite desenhar a janela, mas não dá automaticamente acesso aos seus projetos.
 
-## 6. Plano de recuperação
+## 5. Docker Hub
 
-Se uma dupla atrasar, use os arquivos fornecidos como ponto de partida. Se faltar acesso ao Hub, a turma pode executar uma imagem de referência já publicada pelo instrutor. Para falhas de display, use o guia da IDE; mantenha os demais exercícios independentes dessa configuração.
+As imagens de apoio são do instrutor, no namespace `joaolsodocker`. Quem compartilhar uma imagem própria usa sua própria conta no Hub e executa `docker login` quando indicado. A publicação do site é independente das imagens.
 
-Fontes: [Docker Engine](https://docs.docker.com/engine/install/), [Compose](https://docs.docker.com/compose/), [Linux Mint](https://www.linuxmint.com/download_all.php).
+Fontes: [Docker](https://docs.docker.com/get-started/docker-overview/), [Compose](https://docs.docker.com/compose/).

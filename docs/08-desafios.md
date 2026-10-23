@@ -1,6 +1,6 @@
 # Desafios, diagnóstico e recuperação
 
-Tempo: 10 minutos ao final, ou atividades de aprofundamento. Execute na raiz do pacote e use somente os recursos do exercício.
+Atividades de aprofundamento e diagnóstico após os exemplos principais. Execute na pasta HOME/oficina-docker com os YAMLs baixados e use somente os recursos do exercício.
 
 ## 1. O banco está no endereço errado
 
@@ -38,13 +38,13 @@ Recuperação: use a porta publicada exibida, normalmente `http://localhost:8088
 
 ## 3. Um mount ocultou os arquivos
 
-A IDE sem bind e a IDE com bind podem apresentar conteúdos diferentes em `/workspace`. Compare:
+A primeira IDE abre /workspace; a segunda abre /host-home, que é HOME do computador. Não há pasta exemplos/mural presumida no host. Compare:
 
 ```bash
-./scripts/ide.sh estado
+docker inspect ide
 ```
 
-Inspecione o container específico para verificar Mounts. A montagem não mescla automaticamente os diretórios. Não usar `rm -rf` para tentar fazer os arquivos ocultos reaparecerem.
+O comando mostra os Mounts do container ide. Se a IDE já estiver sendo gerenciada pelo Compose, encerre-a com docker compose -f compose.ide.yaml down no lugar de docker rm. A montagem não mescla automaticamente os diretórios. Não usar `rm -rf` para tentar fazer os arquivos ocultos reaparecerem.
 
 ## 4. A senha mudou, mas o volume continuou
 
@@ -60,16 +60,15 @@ Confirme a referência resolvida:
 docker compose -f compose.app.yaml -f compose.hub.yaml config --images
 ```
 
-Confira `API_IMAGE`, execute `pull api` e use `up --no-build`. A configuração base também descreve um build; omitir o cuidado pode acabar executando código local em vez de validar a publicação.
+Confira API_IMAGE e execute pull api. Os Compose de consumo não possuem build. Se usou --pull never no exercício de imagem local, volte ao comportamento normal para buscar a imagem publicada.
 
 ## 6. Limpeza específica
 
-Encerrar sem apagar o banco:
+Encerrar sem apagar o banco; a última linha remove apenas a IDE de demonstração e sua camada gravável:
 
 ```bash
-docker compose down
 docker compose -f compose.app.yaml down
-./scripts/ide.sh parar
+docker rm -f ide
 ```
 
 Limpar os containers e o volume do laboratório básico, se ainda existirem:

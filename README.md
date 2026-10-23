@@ -1,99 +1,61 @@
 # Docker, na prática
 
-Pacote de uma oficina de **3 horas**, preparado para laboratório Linux, com Linux Mint como alvo provável. Editor, compilador e banco da oficina rodam em containers. Os slides são uma aplicação HTML/CSS/JavaScript; a IDE de demonstração é o **VS Code desktop dentro de um container**.
+Material de uma oficina para ensino médio, ensino superior e comunidade. O percurso parte de processos e arquivos, passa por uma IDE desktop em container, constrói imagens de exemplos pequenos e termina com uma aplicação de três serviços no Compose.
 
-## Comece por aqui
+Os slides são um site estático para **GitHub Pages**. A pessoa abre o endereço fornecido pelo instrutor; não precisa executar Docker para ler a apresentação. Este repositório é o material de autoria: **os participantes não precisam cloná-lo**.
 
-Na pasta deste pacote, com Docker Engine e o plugin Compose funcionando:
+## Percurso da oficina
 
-```bash
-docker compose up -d --build
-```
+1. Entender Docker, imagens, tags, containers e processos.
+2. Explorar Alpine, arquivos e o ciclo de vida do container.
+3. Baixar um `main.go` com uma soma; abrir a IDE primeiro sem acesso à pasta pessoal e depois com um bind mount de HOME.
+4. Executar e modificar o mesmo programa usando Go em um container.
+5. Explorar o template original Vue + Vite, com Node no Docker; comparar desenvolvimento e imagem pronta.
+6. Construir Dockerfiles de Go e Vue, observar contexto, cache e múltiplos estágios.
+7. Usar Compose com o mural pronto: frontend, API Go, PostgreSQL, rede e persistência.
+8. Publicar uma imagem própria e executar a de um colega.
 
-Abra [os slides em localhost:8080](http://localhost:8080). Use **← / →**, **N** para notas, **F** para apresentação e **/** para a referência pesquisável. Os botões das simulações alteram apenas o modelo didático; não executam Docker.
+A IDE abre uma janela nativa do VS Code no desktop Linux. As ferramentas Go, Node e o banco ficam em containers. O conteúdo central é Docker; os programas de exercício continuam pequenos.
 
-Para subir o mural de recados:
+## Comandos e materiais
 
-```bash
-docker compose -f compose.app.yaml up -d --build --wait
-```
+O painel de comandos reúne os exemplos copiáveis. O passo a passo de cada exercício abre uma página específica daquela tela; os guias completos conservam âncoras por seção para consulta. Flags têm explicações por mouse, toque e teclado. Os materiais ficam concentrados no catálogo; cada etapa oferece apenas o download necessário naquele momento.
 
-Abra [o mural em localhost:8088](http://localhost:8088). Publique um recado, recrie os containers sem remover o volume e confira a persistência.
+Crie `$HOME/oficina-docker` pelo gerenciador de arquivos. Os ZIPs já contêm a pasta do exemplo; extraia diretamente nessa pasta, sem duplicar o nome do projeto.
 
-Para a IDE desktop, execute no terminal da sessão gráfica local:
+| Arquivo | Conteúdo e destino |
+| --- | --- |
+| `main.go` | Primeiro arquivo, salvo em `HOME/oficina-docker/go-soma/main.go` |
+| `go-receitas.zip` | Somente Dockerfiles e `.dockerignore` em `go-soma/`; preserva o main.go já editado |
+| `go-soma.zip` | Projeto completo para recuperação opcional; pode substituir a edição de main.go |
+| `vue-vite.zip` | Pasta `vue-vite/` com template Vue/Vite, lockfile, Dockerfile e Nginx |
+| `compose-ide.zip` | Três YAMLs para traduzir a execução da IDE para Compose |
+| `compose-mural.zip` | Três YAMLs para API, frontend, banco e rede |
+| `receitas-dockerfile.zip` | Receita da IDE para leitura e discussão |
 
-```bash
-./scripts/ide.sh preparar
-./scripts/ide.sh abrir
-# Mais tarde, durante o bloco de bind mounts:
-./scripts/ide.sh com-projeto
-```
+Preserve suas alterações antes de extrair novamente um pacote. O mural avançado usa imagens prontas: a turma não precisa estudar seu código-fonte.
 
-A primeira execução não monta o projeto; a segunda monta `exemplos/mural` em `/workspace`. A conexão gráfica usa sockets locais e autorização da sessão. O caminho principal é X11/XWayland; há alternativa Wayland. Consulte [o guia gráfico](docs/02-ide-desktop.md).
+## Imagens do instrutor
 
-## Conteúdo
+| Imagem | Uso |
+| --- | --- |
+| `joaolsodocker/oficina-go:1.0.0` | Programa de soma já compilado |
+| `joaolsodocker/oficina-ide:1.0.0` | VS Code desktop |
+| `joaolsodocker/oficina-vue:1.0.0` | Mesmo template Vue, compilado e servido por Nginx |
+| `joaolsodocker/oficina-api:1.0.0` | API pronta do mural |
+| `joaolsodocker/oficina-web:1.0.0` | Frontend e proxy do mural |
+| `postgres:17-alpine` | Banco do mural |
 
-- `apresentacao/`: 44 slides, notas do instrutor, quiz, comandos copiáveis, simulações de filesystem, camadas, cache e rede, e explorador de Compose.
-- `docs/`: nove guias em Markdown e HTML, com comandos, resultados esperados, correções e referências.
-- `exemplos/mural/api/`: API Go com PostgreSQL, validação, readiness, reconexão, encerramento por sinal e testes.
-- `exemplos/mural/frontend/`: frontend estático e proxy Nginx para a API.
-- `exemplos/ide/`: Dockerfile do VS Code desktop e comando `abrir-ide`.
-- `compose.yaml`: os próprios materiais em um container.
-- `compose.app.yaml`: mural completo com web, API, banco, rede e volume nomeado.
-- `compose.rede.yaml`: aprofundamento opcional com redes separadas para entrada e dados.
-- `compose.hub.yaml`: overlay para executar a API publicada por outra pessoa, sem build local.
-- `compose.ide*.yaml`: IDE com X11 ou Wayland e overlay para a pasta do projeto.
-- `scripts/`: preparação, IDE, testes da API e da stack, exportação da ajuda Compose e empacotamento.
-- `ROTEIRO.md`: agenda de 180 minutos.
-- `REFERENCIAS.md`: notas técnicas e fontes primárias.
+As imagens precisam ser publicadas pelo instrutor antes da oficina. O site não depende de uma imagem de slides no Hub.
 
-## Configuração
+## Autoria e preparação
 
-O pacote funciona com valores didáticos padrão, sem criar `.env`. Para personalizar, copie `.env.example` para `.env` e altere as portas, o endereço de publicação, a versão da API e os dados locais do banco.
+[INSTRUTOR.md](INSTRUTOR.md) descreve geração dos materiais, preview, preparação das imagens e publicação manual. [ROTEIRO.md](ROTEIRO.md) registra o percurso pedagógico. [DESIGN.md](DESIGN.md) descreve a interface. [TESTES.md](TESTES.md) registra a validação.
 
-As portas são publicadas em `127.0.0.1` por padrão. Para servir os materiais aos computadores do laboratório, defina `MATERIALS_BIND=0.0.0.0`, recrie o serviço e use o endereço da máquina do instrutor, conforme a rede local. A imagem dos slides não inclui dados ou credenciais do computador.
-
-As credenciais padrão do banco servem somente ao exercício local. Se o volume já foi inicializado, alterar `POSTGRES_PASSWORD` não atualiza automaticamente a senha existente no PostgreSQL; veja o guia de diagnóstico.
-
-## Guias na ordem da aula
-
-1. [Preparação](docs/00-preparacao.md)
-2. [Containers e filesystem](docs/01-containers.md)
-3. [IDE desktop](docs/02-ide-desktop.md)
-4. [Compose e armazenamento](docs/03-compose-armazenamento.md)
-5. [Imagens e Dockerfile](docs/04-imagens-dockerfile.md)
-6. [Aplicação e redes](docs/05-aplicacao-rede.md)
-7. [Docker Hub](docs/06-docker-hub.md)
-8. [Referência detalhada](docs/07-referencia.md)
-9. [Desafios e diagnóstico](docs/08-desafios.md)
-
-## Testes e preparo
+Para gerar os materiais e uma pasta estática local, sem publicar:
 
 ```bash
-./scripts/testar-api.sh
-./scripts/testar-stack.sh
-./scripts/precarregar.sh
-./scripts/exportar-referencia-compose.sh
+python3 ferramentas/preparar_materiais.py --site-dir .runtime/site
 ```
 
-A referência pesquisável dos slides inclui uma captura da CLI Compose 5.6.0. A versão instalada no laboratório pode ser diferente; a ajuda local é a referência exata de opções disponíveis. Não é necessário atualizar o laboratório para essa versão para usar os exercícios centrais.
-
-Para visualizar os slides sem servidor, abra `apresentacao/index.html`; navegação, notas e simulações funcionam localmente. Para baixar o ZIP e navegar pelos guias como em aula, prefira servir o pacote via Docker. Fontes, scripts e estilos são locais; consultas às fontes oficiais exigem internet.
-
-O alcance das verificações está em [TESTES.md](TESTES.md).
-
-## Compartilhar com a turma
-
-O site oferece o pacote em `/downloads/oficina-docker.zip`. A imagem dos materiais gera esse arquivo no build. Para atualizar o ZIP local e as versões HTML dos guias após editar o material, execute `python3 scripts/empacotar.py`; esse utilitário é para manutenção, não um pré-requisito dos alunos.
-
-Nenhum script faz login, publica imagens no Hub ou remove indiscriminadamente recursos Docker. As etapas de publicação são manuais e estão no guia.
-
-## Encerrar
-
-```bash
-docker compose down
-docker compose -f compose.app.yaml down
-./scripts/ide.sh parar
-```
-
-Esses comandos preservam o volume nomeado do banco. Para apagar **os recados do exercício**, execute separadamente `docker compose -f compose.app.yaml down -v`.
+A ferramenta de autoria não faz parte dos comandos da aula. Ela copia somente os arquivos públicos permitidos para a pasta de site. O workflow de Pages é disparado manualmente no GitHub Actions; não há publicação automática em push.

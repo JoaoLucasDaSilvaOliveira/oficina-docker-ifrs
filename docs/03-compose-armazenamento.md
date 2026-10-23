@@ -1,45 +1,53 @@
-# Compose, bind mounts e volumes
+# Compose, serviços e armazenamento
 
-Tempo: 25 minutos. Execute na raiz do pacote, no host.
+Compose descreve serviços e recursos em YAML. O primeiro conjunto deste bloco é o mural pronto: frontend, API Go e PostgreSQL. A turma não precisa baixar ou compreender o código dessa aplicação.
 
-## 1. Compose organiza uma aplicação
+Baixe [Compose do mural](../downloads/compose-mural.zip) e extraia em `HOME/oficina-docker`. Devem aparecer `compose.app.yaml`, `compose.rede.yaml` e `compose.hub.yaml`. Todos consomem imagens prontas; não dependem de contexto local de build.
 
-Abra `compose.yaml`: o serviço `slides` usa a imagem dos materiais, publica uma porta e executa com filesystem somente leitura, exceto `/tmp` temporário.
+## 1. Conferir, iniciar e observar
 
 ```bash
-docker compose config
-docker compose up -d --build
-docker compose ps
-docker compose logs -f --tail 50
+cd "$HOME/oficina-docker"
+docker compose -f compose.app.yaml config
+docker compose -f compose.app.yaml pull
+docker compose -f compose.app.yaml up -d --wait
+docker compose -f compose.app.yaml ps
+docker compose -f compose.app.yaml logs -f --tail 50
 ```
 
-Abra `http://localhost:8080`. Ctrl+C encerra somente o acompanhamento de logs. `config` mostra o modelo resolvido; `ps` mostra instâncias reais. O nome do projeto da raiz é `oficina-docker`.
+Abra `http://localhost:8088`. `config` mostra o modelo resolvido, sem iniciar os serviços. O `-f` antes do subcomando seleciona o arquivo; o `-f` de logs acompanha novas mensagens. Ctrl+C sai do acompanhamento sem parar os containers.
 
-`image`, `build` e `ports` são atributos do YAML. `-f`, `-d` e `--build` são flags da CLI. A chave superior `version:` está obsoleta e não escolhe um schema.
+| Nome | Papel |
+| --- | --- |
+| oficina-mural | Projeto Compose |
+| web, api, db | Serviços no YAML |
+| joaolsodocker/oficina-api:1.0.0 | Imagem da API |
+| oficina-mural-api-1 | Container criado para uma instância da API |
+| oficina-mural_default | Rede padrão criada para o projeto |
+
+`docker ps` vê todos os containers em execução do daemon selecionado. `docker compose -f compose.app.yaml ps` filtra o projeto selecionado. Ambos aceitam `-a` para incluir parados. Compose usa labels de projeto e serviço para identificar seus recursos.
 
 ## 2. Ciclo de vida
 
 ```bash
-docker compose stop
-docker compose ps -a
-docker compose start
-docker compose down
-docker compose up -d
+docker compose -f compose.app.yaml stop
+docker compose -f compose.app.yaml ps -a
+docker compose -f compose.app.yaml start
+docker compose -f compose.app.yaml down
+docker compose -f compose.app.yaml up -d --wait
 ```
 
-`stop/start` preserva as instâncias. `down/up` remove e recria containers e redes do projeto. Volumes nomeados permanecem por padrão. `restart` não é uma substituição para `up` ao alterar o YAML.
+Stop/start preserva as instâncias. Down/up remove e recria os containers e a rede. Volumes nomeados permanecem por padrão. `restart` não substitui `up` ao alterar o YAML. `down -v` remove os volumes abrangidos e descarta os recados, por isso deve ser usado apenas quando essa limpeza for intencional.
 
-## 3. Bind mount para editar o projeto
+## 3. Valores padrão e portas
 
-```bash
-./scripts/ide.sh com-projeto
-```
+No YAML, `${APP_BIND:-127.0.0.1}` usa APP_BIND se estiver definido e não vazio; caso contrário usa 127.0.0.1. A publicação `127.0.0.1:8088:8080` liga porta 8088 do host à 8080 do container apenas na interface local.
 
-A pasta `exemplos/mural` aparece como `/workspace` no editor. Alterações nesse destino afetam a pasta do host. Montar uma pasta vazia sobre um diretório do container oculta seu conteúdo anterior; não faz uma cópia automática dos arquivos para o host.
+A rede entre serviços usa os nomes `api` e `db`. A aplicação no navegador usa o endereço do host. `localhost` dentro da API não aponta para o banco.
 
-Na sintaxe longa, `type: bind` explicita a intenção. Com a flag `--mount`, a origem precisa existir por padrão. `-v` pode criar uma pasta automaticamente quando o caminho não existe, inclusive se você pretendia montar um arquivo. Permissões reais e UID/GID continuam valendo.
+## 4. Volume nomeado
 
-## 4. Volume nomeado para dados
+Antes de explorar o volume PostgreSQL, esta experiência menor permite observar persistência:
 
 ```bash
 docker volume create dados-lab
@@ -50,25 +58,33 @@ docker run --rm --mount type=volume,src=dados-lab,dst=/dados \
 docker volume inspect dados-lab
 ```
 
-Resultado esperado: `persisti`. O primeiro container foi removido por `--rm`, mas o volume nomeado continua e é montado no segundo. Não é preciso manipular diretamente a pasta interna de armazenamento Docker.
+O primeiro container é removido por `--rm`, mas o volume nomeado continua e pode ser montado pelo segundo. O PostgreSQL usa esse princípio para preservar os recados do mural.
 
-## 5. Detalhes que mudam a explicação
+## 5. Traduzir a IDE já conhecida para Compose
 
-- A camada gravável pertence à instância; volumes nomeados têm ciclo próprio.
-- Um `VOLUME` declarado na imagem pode criar volume anônimo mesmo quando o comando não informa `-v`.
-- `run --rm` remove os volumes anônimos associados, mas preserva os nomeados.
-- Um volume vazio montado sobre um diretório com conteúdo recebe uma cópia inicial por padrão; `volume-nocopy` altera esse comportamento. Bind mount não faz essa cópia.
-- `tmpfs` guarda dados temporários em memória e não é o mecanismo de persistência do banco.
-- `down -v` remove os volumes declarados abrangidos e os anônimos associados; volumes externos são preservados. Anônimos preservados por `down` não são automaticamente reutilizados no próximo `up`.
-
-## 6. Consulta de configuração
+A comparação é opcional e acontece depois dos exemplos de Dockerfile. Baixe [Compose da IDE](../downloads/compose-ide.zip) e extraia em `HOME/oficina-docker`. Remova apenas o container descartável da IDE anterior e forneça as variáveis da sessão:
 
 ```bash
-docker compose -f compose.app.yaml config --services
-docker compose -f compose.app.yaml config --images
-docker compose -f compose.app.yaml config --quiet
+docker rm -f ide
+cd "$HOME/oficina-docker"
+export LOCAL_UID="$(id -u)" LOCAL_GID="$(id -g)"
+export HOST_HOSTNAME="$(hostname)"
+export XAUTHORITY="${XAUTHORITY:-$HOME/.Xauthority}"
+docker compose -f compose.ide.yaml up -d
 ```
 
-O último comando valida sem imprimir o modelo. `config --environment` permite conferir a interpolação, mas pode exibir valores sensíveis da configuração: não publique essa saída com credenciais reais.
+A base abre `/workspace` sem pasta pessoal montada. Para recriar com HOME:
 
-Fontes: [CLI Compose](https://docs.docker.com/reference/cli/docker/compose/), [volumes](https://docs.docker.com/engine/storage/volumes/), [bind mounts](https://docs.docker.com/engine/storage/bind-mounts/).
+```bash
+docker compose -f compose.ide.yaml -f compose.ide.bind.yaml config
+docker compose -f compose.ide.yaml -f compose.ide.bind.yaml up -d --force-recreate
+docker compose -f compose.ide.yaml -f compose.ide.bind.yaml ps -a
+```
+
+O overlay usa `source: ${HOME}`, `target: /host-home` e `working_dir: /host-home`. Como o CMD da imagem abre ponto, a IDE segue esse diretório. Para Wayland nativo, substitua a base por `compose.ide.wayland.yaml`; não combine as duas bases gráficas.
+
+## 6. Montagem e permissões
+
+Um bind aponta para uma pasta do host; um volume é administrado pelo Docker. Montar sobre um diretório oculta os arquivos anteriores naquele caminho, sem mesclar ou alterar a imagem. Acesso de escrita continua sujeito a UID/GID e permissões. Montar HOME não transforma o processo em root.
+
+Fontes: [Compose](https://docs.docker.com/reference/cli/docker/compose/), [bind mounts](https://docs.docker.com/engine/storage/bind-mounts/), [volumes](https://docs.docker.com/engine/storage/volumes/).

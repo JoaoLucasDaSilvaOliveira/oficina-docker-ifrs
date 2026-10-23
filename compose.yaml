@@ -1,8 +1,7 @@
 name: oficina-docker
 services:
   slides:
-    build: .
-    image: oficina/slides:1.0.0
+    image: joaolsodocker/oficina-slides:1.0.0
     ports:
       - "${MATERIALS_BIND:-127.0.0.1}:${MATERIALS_PORT:-8080}:8080"
     read_only: true

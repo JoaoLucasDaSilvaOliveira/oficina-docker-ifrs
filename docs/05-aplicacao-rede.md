@@ -1,6 +1,8 @@
 # Aplicação Go, frontend, PostgreSQL e rede
 
-Tempo: 30 minutos. Execute na raiz do pacote, no terminal do host.
+As imagens de apoio já vêm do Hub: joaolsodocker/oficina-web:1.0.0 e joaolsodocker/oficina-api:1.0.0. O Compose baixado não possui build nem caminhos do repositório. Baixe [Compose do mural](../downloads/compose-mural.zip) e extraia em HOME/oficina-docker: compose.app.yaml, compose.rede.yaml e compose.hub.yaml. Execute no terminal do host após cd "$HOME/oficina-docker".
+
+Este é o conjunto avançado para praticar Compose. Use as imagens prontas: não é necessário baixar ou estudar o código da API e do frontend. Execute os comandos na pasta HOME/oficina-docker que contém os YAMLs baixados, no terminal do host.
 
 ## 1. Arquitetura
 
@@ -12,7 +14,8 @@ A IDE continua desktop. O navegador aparece aqui porque o mural é uma aplicaç�
 
 ```bash
 docker compose -f compose.app.yaml config
-docker compose -f compose.app.yaml up -d --build --wait
+docker compose -f compose.app.yaml pull
+docker compose -f compose.app.yaml up -d --wait
 docker compose -f compose.app.yaml ps
 docker compose -f compose.app.yaml logs --tail 30 api
 ```
@@ -65,7 +68,7 @@ docker compose -f compose.app.yaml down -v
 docker compose -f compose.app.yaml up -d --wait
 ```
 
-Agora o volume novo começa vazio. Os scripts não executam essa limpeza automaticamente.
+Agora o volume novo começa vazio. Essa limpeza só ocorre ao executar explicitamente o comando com -v.
 
 ## 6. Uma dependência fica indisponível
 

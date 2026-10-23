@@ -6,15 +6,10 @@ Esta referência separa comandos da CLI, opções do Compose, atributos YAML e i
 
 Os slides incluem uma captura pesquisável da ajuda do **Compose 5.6.0**, incluindo ajuda global, comandos e subcomandos disponíveis nessa distribuição. A captura em texto está em `docs/compose-ajuda-5.6.0.txt`. Os grupos de comandos também foram percorridos.
 
-Para capturar a versão do laboratório sem instalar nada adicional:
+Para consultar a versão instalada no laboratório e suas opções, use os comandos diretamente:
 
 ```bash
-./scripts/exportar-referencia-compose.sh
-```
-
-O arquivo `docs/compose-ajuda-local.txt` registra a versão, ajuda global e ajuda de comandos e subcomandos. Para uma opção específica:
-
-```bash
+docker compose version
 docker compose --help
 docker compose up --help
 docker compose run --help

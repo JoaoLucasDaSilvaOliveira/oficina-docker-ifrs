@@ -1,16 +1,16 @@
-FROM alpine:3.22 AS pacote
-RUN apk add --no-cache zip
-WORKDIR /oficina-docker
-COPY . .
-RUN cd / && zip -qr /oficina-docker.zip oficina-docker -x 'oficina-docker/downloads/*' 'oficina-docker/.runtime/*' 'oficina-docker/.git/*' 'oficina-docker/node_modules/*' 'oficina-docker/.test-results/*'
+# Preview local opcional do site; a distribuição principal é o GitHub Pages.
+FROM python:3.13-alpine AS site
+WORKDIR /autoria
+COPY ferramentas ./ferramentas
+COPY apresentacao ./apresentacao
+COPY docs ./docs
+COPY exemplos ./exemplos
+COPY compose*.yaml ./
+COPY index.html ./index.html
+RUN python ferramentas/preparar_materiais.py --site-dir /site
 
 FROM nginxinc/nginx-unprivileged:1.29-alpine
 COPY infra/materiais.conf /etc/nginx/conf.d/default.conf
-COPY index.html /usr/share/nginx/html/index.html
-COPY apresentacao /usr/share/nginx/html/apresentacao
-COPY docs /usr/share/nginx/html/docs
-COPY exemplos /usr/share/nginx/html/exemplos
-COPY --from=pacote /oficina-docker.zip /usr/share/nginx/html/downloads/oficina-docker.zip
-COPY README.md ROTEIRO.md REFERENCIAS.md TESTES.md /usr/share/nginx/html/
+COPY --from=site /site/ /usr/share/nginx/html/
 EXPOSE 8080
 HEALTHCHECK --interval=10s --timeout=3s --start-period=3s CMD wget -q -O /dev/null http://127.0.0.1:8080/healthz || exit 1

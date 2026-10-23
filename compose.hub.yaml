@@ -1,5 +1,5 @@
 # Overlay: use com -f compose.app.yaml -f compose.hub.yaml.
-# up --no-build evita build local; pull api busca a imagem do colega.
+# A base já usa apenas imagens; este overlay seleciona a imagem do colega.
 services:
   api:
     image: ${API_IMAGE:?Defina API_IMAGE com a imagem publicada no Docker Hub}

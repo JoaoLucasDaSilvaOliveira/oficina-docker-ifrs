@@ -1,6 +1,6 @@
 # Containers, processos e filesystem
 
-Tempo: 25 minutos. Execute na raiz do pacote, no terminal do host, salvo indicação diferente.
+Tempo: 25 minutos. Execute em qualquer diretório do host, no terminal do host, salvo indicação diferente.
 
 ## 1. Baixar a imagem e criar uma instância
 

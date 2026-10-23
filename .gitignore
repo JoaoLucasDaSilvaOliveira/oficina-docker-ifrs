@@ -8,3 +8,5 @@ node_modules/
 coverage.out
 *.test
 .test-results/
+_site/
+__pycache__/

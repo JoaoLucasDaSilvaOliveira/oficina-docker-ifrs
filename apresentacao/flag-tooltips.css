@@ -1,0 +1,77 @@
+.flag-token {
+  cursor: help;
+  border-bottom: 1px dotted currentColor;
+  border-radius: 2px;
+  touch-action: manipulation;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+.flag-token:hover,
+.flag-token[aria-expanded="true"] {
+  background: #b6d9ff33;
+  border-bottom-style: solid;
+}
+.flag-token:focus-visible {
+  outline: 2px solid #f57b45;
+  outline-offset: 3px;
+}
+.flag-tooltip {
+  position: fixed;
+  z-index: 100;
+  width: max-content;
+  max-width: min(390px, calc(100vw - 24px));
+  max-height: min(430px, calc(100dvh - 24px));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 17px 20px;
+  border: 1px solid #c4d6e6;
+  border-top: 3px solid #f57b45;
+  border-radius: 7px;
+  background: #fff;
+  color: #102b43;
+  box-shadow: 0 8px 32px #102b432b;
+  font:
+    16px/1.5 Barlow,
+    system-ui,
+    sans-serif;
+  text-align: left;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.flag-tooltip[hidden] {
+  display: none;
+}
+.flag-tooltip-title {
+  display: block;
+  font:
+    600 18px/1.4 ui-monospace,
+    monospace;
+}
+.flag-tooltip p {
+  margin: 12px 0 0;
+  font: inherit;
+  color: inherit;
+}
+.flag-tooltip-context {
+  display: block;
+  margin-bottom: 4px;
+  color: #526a7b;
+  font:
+    12px/1.5 ui-monospace,
+    monospace;
+}
+.flag-hint {
+  color: #526a7b;
+  font-size: 13px;
+  margin: 0 0 12px;
+}
+@media print {
+  .flag-tooltip,
+  .flag-hint {
+    display: none !important;
+  }
+  .flag-token {
+    border: 0;
+    background: none;
+  }
+}

@@ -6,13 +6,19 @@
     <meta name="theme-color" content="#102b43" />
     <meta
       name="description"
-      content="Oficina prática de Docker: slides interativos, experimentos e uma aplicação Go, frontend e PostgreSQL."
+      content="Oficina Docker: conceitos, experimentos e materiais de estudo."
     />
-    <title>Docker, na prática · Oficina interativa</title>
+    <title>Oficina Docker</title>
     <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="flag-tooltips.css" />
     <script defer src="slides.js"></script>
     <script defer src="quiz.js"></script>
     <script defer src="compose-reference.js"></script>
+    <script defer src="docker-reference.js"></script>
+    <script defer src="command-search.js"></script>
+    <script defer src="guide-index.js"></script>
+    <script defer src="flag-tooltips.js"></script>
+    <script defer src="diagrams.js"></script>
     <script defer src="app.js"></script>
   </head>
   <body>
@@ -24,9 +30,11 @@
           class="icon-button mobile-menu"
           aria-label="Abrir sumário"
           aria-expanded="false"
+          aria-controls="sidebar"
         >
-          ☰</button
-        ><a class="brand" href="#/inicio"
+          ☰
+        </button>
+        <a class="brand" href="#/inicio"
           ><span class="brand-symbol" aria-hidden="true">▤</span> Oficina<span
             class="brand-divider"
             >/</span
@@ -34,76 +42,59 @@
         >
       </div>
       <div class="top-actions">
-        <span class="session-tag">3 horas de prática</span
-        ><button class="text-button" id="commands-button">
-          Comandos <kbd>/</kbd></button
-        ><button class="text-button" id="resources-button">Materiais</button
-        ><button
+        <button class="text-button" id="commands-button">
+          Comandos <kbd>/</kbd>
+        </button>
+        <button class="text-button" id="resources-button">Materiais</button>
+        <button
           class="icon-button"
           id="presentation-button"
           aria-label="Ativar modo de apresentação"
-          title="Modo de apresentação (F)"
+          title="Tela cheia (F)"
         >
           ⛶
         </button>
       </div>
     </header>
+    <button
+      class="sidebar-scrim"
+      id="sidebar-scrim"
+      aria-label="Fechar sumário"
+      hidden
+    ></button>
     <div class="app-layout">
       <aside class="sidebar" id="sidebar" aria-label="Sumário da oficina">
         <div class="sidebar-heading">
-          <span>Percurso</span><span id="chapter-count">8 capítulos</span>
+          <span>Percurso</span><span id="chapter-count"></span>
         </div>
         <nav id="chapters"></nav>
-        <div class="sidebar-bottom">
-          <p>Um terminal. Muitas possibilidades.</p>
-          <a href="../downloads/oficina-docker.zip" download
-            >Baixar o pacote completo <span aria-hidden="true">↧</span></a
-          ><span>Linux · HTML · Go · PostgreSQL</span>
-        </div>
       </aside>
       <div class="workspace">
-        <div class="slide-context">
-          <span id="breadcrumb"></span><span id="slide-kind"></span>
-        </div>
+        <div class="slide-context"><span id="breadcrumb"></span></div>
         <main
           id="slide"
           class="slide"
           tabindex="-1"
           aria-label="Slide atual"
         ></main>
-        <aside id="notes" class="notes" hidden aria-labelledby="notes-title">
-          <h2 id="notes-title">Notas do instrutor</h2>
-          <p id="notes-text"></p>
-          <div id="notes-links"></div>
-        </aside>
         <footer class="navigation">
-          <div class="nav-left">
-            <button id="notes-button" class="text-button" aria-pressed="false">
-              Notas <kbd>N</kbd></button
-            ><button
-              id="timer-button"
-              class="text-button"
-              aria-label="Iniciar cronômetro"
-            >
-              ◷ <span id="timer">00:00</span></button
-            ><button
-              id="timer-reset"
-              class="text-button timer-reset"
-              aria-label="Zerar cronômetro"
-              title="Zerar cronômetro"
-            >
-              ↺
-            </button>
-          </div>
+          <button
+            id="reference-button"
+            class="text-button reference-button"
+            aria-haspopup="dialog"
+          >
+            Referências
+          </button>
           <div class="page-nav">
             <button
               id="previous"
               class="icon-button"
               aria-label="Slide anterior"
             >
-              ←</button
-            ><span id="page-count" aria-live="polite"></span
-            ><button id="next" class="next-button" aria-label="Próximo slide">
+              ←
+            </button>
+            <span id="page-count" aria-live="polite" aria-atomic="true"></span>
+            <button id="next" class="next-button" aria-label="Próximo slide">
               Próximo <span aria-hidden="true">→</span>
             </button>
           </div>
@@ -113,50 +104,85 @@
         </div>
       </div>
     </div>
-    <dialog id="commands-dialog" class="drawer">
+    <dialog
+      id="exercise-dialog"
+      class="exercise-dialog"
+      aria-labelledby="exercise-title"
+    >
       <div class="dialog-head">
-        <div>
-          <p class="dialog-kicker">Referência para consultar</p>
-          <h2>Comandos do Docker</h2>
-        </div>
-        <button class="icon-button close-dialog" aria-label="Fechar comandos">
+        <h2 id="exercise-title"></h2>
+        <button
+          class="icon-button close-dialog"
+          aria-label="Fechar comandos do exercício"
+        >
           ×
         </button>
       </div>
-      <label class="search-label" for="command-search"
-        >Buscar comando, flag ou explicação</label
-      ><input
-        type="search"
-        id="command-search"
-        placeholder="Ex.: --wait, volumes, exec…"
-        autocomplete="off"
-      />
-      <p class="dialog-hint">
-        Os botões copiam texto. Nenhum comando é executado por esta página.
-      </p>
-      <div id="command-results"></div>
+      <div class="dialog-scroll" id="exercise-content"></div>
     </dialog>
-    <dialog id="resources-dialog" class="drawer">
+    <dialog
+      id="commands-dialog"
+      class="drawer"
+      aria-labelledby="commands-title"
+    >
       <div class="dialog-head">
-        <div>
-          <p class="dialog-kicker">Para acompanhar e levar</p>
-          <h2>Material da oficina</h2>
-        </div>
+        <h2 id="commands-title">Comandos do Docker</h2>
+        <button
+          class="icon-button close-dialog"
+          aria-label="Fechar consulta de comandos"
+        >
+          ×
+        </button>
+      </div>
+      <div class="search-area">
+        <label for="command-search">Buscar comando ou flag</label
+        ><input
+          type="search"
+          id="command-search"
+          placeholder="ps, exec, compose logs, --tail…"
+          autocomplete="off"
+        />
+        <p class="catalog-version" id="catalog-version"></p>
+      </div>
+      <div class="dialog-scroll" id="command-results"></div>
+    </dialog>
+    <dialog
+      id="resources-dialog"
+      class="drawer"
+      aria-labelledby="resources-title"
+    >
+      <div class="dialog-head">
+        <h2 id="resources-title">Materiais</h2>
         <button class="icon-button close-dialog" aria-label="Fechar materiais">
           ×
         </button>
       </div>
-      <a class="download-button" href="../downloads/oficina-docker.zip" download
-        >Baixar todos os arquivos <span>ZIP</span></a
-      >
-      <div id="guide-list"></div>
-      <p class="dialog-hint">
-        Os guias incluem comandos, resultados esperados e recuperação. Os
-        exemplos completos estão no pacote.
-      </p>
-      <a href="../ROTEIRO.md" target="_blank" rel="noopener"
-        >Roteiro do instrutor</a
-      >
+      <div class="search-area">
+        <label for="material-search">Buscar exercício ou arquivo</label
+        ><input
+          type="search"
+          id="material-search"
+          placeholder="IDE, Vue, volume, Dockerfile…"
+          autocomplete="off"
+        />
+      </div>
+      <div class="dialog-scroll" id="guide-list"></div>
+    </dialog>
+    <dialog
+      id="reference-dialog"
+      class="reference-dialog"
+      aria-labelledby="reference-title"
+    >
+      <div class="dialog-head">
+        <h2 id="reference-title">Referências</h2>
+        <button
+          class="icon-button close-dialog"
+          aria-label="Fechar referências"
+        >
+          ×
+        </button>
+      </div>
+      <div class="dialog-scroll" id="reference-content"></div>
     </dialog>
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
   </body>
