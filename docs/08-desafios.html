@@ -3,40 +3,40 @@
 <h2 id="o-banco-esta-no-endereco-errado">1. O banco está no endereço errado</h2>
 <p>Introduza a falha:</p>
 <div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>export DB_HOST=localhost
-docker compose -f compose.app.yaml up -d --force-recreate api
-docker compose -f compose.app.yaml ps -a
-docker compose -f compose.app.yaml logs --tail 30 api</code></pre></div>
+sudo -E docker compose -f compose.app.yaml up -d --force-recreate api
+sudo -E docker compose -f compose.app.yaml ps -a
+sudo -E docker compose -f compose.app.yaml logs --tail 30 api</code></pre></div>
 <p>Resultado esperado: a API procura o PostgreSQL no próprio container e aguarda até falhar a inicialização. <code>config</code> permite observar o valor resolvido. Alterar variável no shell não modifica um processo já em execução; por isso recriamos a API.</p>
 <p>Recuperação:</p>
 <div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>unset DB_HOST
-docker compose -f compose.app.yaml up -d --force-recreate --wait api
-docker compose -f compose.app.yaml up -d --wait web</code></pre></div>
+sudo -E docker compose -f compose.app.yaml up -d --force-recreate --wait api
+sudo -E docker compose -f compose.app.yaml up -d --wait web</code></pre></div>
 <p>Se você também gravou <code>DB_HOST=localhost</code> em <code>.env</code>, remova ou corrija essa linha para <code>db</code>; <code>unset</code> só remove a variável do shell.</p>
 <h2 id="a-porta-do-navegador-esta-errada">2. A porta do navegador está errada</h2>
 <p>Abra <code>http://localhost:8089</code>, mantendo a configuração padrão. Compare com a saída:</p>
-<div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>docker compose -f compose.app.yaml ps
-docker compose -f compose.app.yaml port web 8080</code></pre></div>
+<div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>sudo -E docker compose -f compose.app.yaml ps
+sudo -E docker compose -f compose.app.yaml port web 8080</code></pre></div>
 <p>Recuperação: use a porta publicada exibida, normalmente <code>http://localhost:8088</code>. Não altere código Go para corrigir um endereço digitado errado no navegador.</p>
 <h2 id="um-mount-ocultou-os-arquivos">3. Um mount ocultou os arquivos</h2>
 <p>A primeira IDE abre /workspace; a segunda abre /host-home, que é HOME do computador. Não há pasta exemplos/mural presumida no host. Compare:</p>
-<div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>docker inspect ide</code></pre></div>
+<div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>sudo docker inspect ide</code></pre></div>
 <p>O comando mostra os Mounts do container ide. Se a IDE já estiver sendo gerenciada pelo Compose, encerre-a com docker compose -f compose.ide.yaml down no lugar de docker rm. A montagem não mescla automaticamente os diretórios. Não usar <code>rm -rf</code> para tentar fazer os arquivos ocultos reaparecerem.</p>
 <h2 id="a-senha-mudou-mas-o-volume-continuou">4. A senha mudou, mas o volume continuou</h2>
 <p>As variáveis <code>POSTGRES_USER</code>, <code>POSTGRES_PASSWORD</code> e <code>POSTGRES_DB</code> da imagem PostgreSQL inicializam um diretório de dados vazio. Alterar a variável depois não muda automaticamente um banco já inicializado.</p>
 <p>Recuperação para a oficina: voltar às credenciais com as quais aquele volume foi criado. Para descartar intencionalmente todos os recados e inicializar de novo, usar <code>down -v</code> no projeto da aplicação e subir novamente. Em dados reais, atualizar a credencial no banco com procedimento apropriado em vez de apagar o volume.</p>
 <h2 id="a-imagem-do-colega-nao-foi-usada">5. A imagem do colega não foi usada</h2>
 <p>Confirme a referência resolvida:</p>
-<div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>docker compose -f compose.app.yaml -f compose.hub.yaml config --images</code></pre></div>
+<div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>sudo -E docker compose -f compose.app.yaml -f compose.hub.yaml config --images</code></pre></div>
 <p>Confira API_IMAGE e execute pull api. Os Compose de consumo não possuem build. Se usou --pull never no exercício de imagem local, volte ao comportamento normal para buscar a imagem publicada.</p>
 <h2 id="limpeza-especifica">6. Limpeza específica</h2>
 <p>Encerrar sem apagar o banco; a última linha remove apenas a IDE de demonstração e sua camada gravável:</p>
-<div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>docker compose -f compose.app.yaml down
-docker rm -f ide</code></pre></div>
+<div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>sudo -E docker compose -f compose.app.yaml down
+sudo docker rm -f ide</code></pre></div>
 <p>Limpar os containers e o volume do laboratório básico, se ainda existirem:</p>
-<div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>docker rm -f fs-lab
-docker volume rm dados-lab</code></pre></div>
+<div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>sudo docker rm -f fs-lab
+sudo docker volume rm dados-lab</code></pre></div>
 <p>Cada comando pode informar recurso inexistente caso já tenha sido removido; isso não exige limpeza global. Para apagar somente os dados do mural:</p>
-<div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>docker compose -f compose.app.yaml down -v</code></pre></div>
+<div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>sudo -E docker compose -f compose.app.yaml down -v</code></pre></div>
 <p>Não usar comandos globais de prune para encerrar a oficina em uma máquina que pode ter outros projetos.</p>
 <h2 id="checklist-de-explicacao">7. Checklist de explicação</h2>
 <ul><li>Onde o processo executa e qual é o principal?</li><li>Em qual camada ou mount o arquivo foi escrito?</li><li>Qual operação removeu ou preservou esse recurso?</li><li>Quem faz a chamada de rede e o que localhost significa ali?</li><li>A imagem consumida foi construída localmente ou baixada?</li><li>Que configuração outra pessoa precisa para executar a mesma aplicação?</li></ul>

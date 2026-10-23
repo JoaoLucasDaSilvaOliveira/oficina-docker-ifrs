@@ -13,7 +13,7 @@ Consulta: 20 de outubro de 2026. Público: laboratório Linux, provavelmente Lin
 - Em Linux, containers são processos isolados que compartilham o kernel do host; uma imagem Debian não inicia uma VM com outro kernel. [What is a container?](https://docs.docker.com/get-started/docker-concepts/the-basics/what-is-a-container/).
 - O Engine usa `containerd` para o ciclo de vida; por padrão, o runtime é `runc`, acionado por um shim. Há runtimes alternativos: o desenho `CLI → dockerd → containerd → shim/runc → processos` é uma simplificação da configuração usual. [Alternative runtimes](https://docs.docker.com/engine/daemon/alternative-runtimes/).
 - Namespaces isolam visões de processos/rede/mounts; cgroups fazem contabilização e controle de recursos. Containers não recebem automaticamente uma cota pequena de CPU/RAM: limites precisam ser configurados. [Engine security](https://docs.docker.com/engine/security/), [Resource constraints](https://docs.docker.com/engine/containers/resource_constraints/).
-- Não ensinar `overlay2` como implementação universal. Instalações novas de Engine 29+ usam por padrão o image store do containerd; o snapshotter usual é `overlayfs`. Instalações anteriores/atualizadas podem manter o armazenamento clássico. O laboratório deve conferir `docker info`. [Containerd image store](https://docs.docker.com/engine/storage/containerd/), [Storage drivers](https://docs.docker.com/engine/storage/drivers/select-storage-driver/).
+- Não ensinar `overlay2` como implementação universal. Instalações novas de Engine 29+ usam por padrão o image store do containerd; o snapshotter usual é `overlayfs`. Instalações anteriores/atualizadas podem manter o armazenamento clássico. O laboratório deve conferir `sudo docker info`. [Containerd image store](https://docs.docker.com/engine/storage/containerd/), [Storage drivers](https://docs.docker.com/engine/storage/drivers/select-storage-driver/).
 
 ## Filesystem: experiências e pegadinhas
 
@@ -30,8 +30,8 @@ A camada gravável pertence ao container, não à imagem. Parar não é remover;
 - Sem `-v`/`--mount` na linha de comando não significa necessariamente sem volume: um `VOLUME` herdado da imagem pode criar volume anônimo. Verificar `.Config.Volumes` na imagem e `.Mounts` no container. Volumes anônimos também podem sobreviver à remoção normal; `run --rm` remove os anônimos associados, mas preserva os nomeados. [Dockerfile: VOLUME](https://docs.docker.com/reference/dockerfile/#volume), [Volumes: anonymous](https://docs.docker.com/engine/storage/volumes/#named-and-anonymous-volumes).
 - Montar sobre diretório existente oculta seu conteúdo. Volume vazio recebe por padrão cópia do conteúdo existente no destino; bind mount não faz essa cópia. [Volumes: existing data](https://docs.docker.com/engine/storage/volumes/#mounting-a-volume-over-existing-data), [Bind mounts: existing data](https://docs.docker.com/engine/storage/bind-mounts/#bind-mounting-over-existing-data).
 - `--mount type=bind` falha por padrão se a origem não existir; `-v` pode criar um diretório, inclusive quando o usuário pretendia montar um arquivo. As permissões são as do filesystem; conferir o usuário do processo e as permissões da pasta montada. [Bind mounts](https://docs.docker.com/engine/storage/bind-mounts/).
-- `docker compose down` remove containers e redes do projeto, preservando volumes por padrão. `down -v` remove volumes nomeados declarados e volumes anônimos anexados; volumes externos não são removidos. Anônimos preservados por `down` não são automaticamente reutilizados no próximo `up`. [Compose down](https://docs.docker.com/reference/cli/docker/compose/down/).
-- `docker exec -it NOME sh` inicia outro processo em container **em execução**. `-i` mantém stdin; `-t` fornece pseudo-TTY. Sair desse shell não para o processo principal. A imagem precisa conter `sh`; imagens mínimas podem não ter shell. [Container exec](https://docs.docker.com/reference/cli/docker/container/exec/).
+- `sudo -E docker compose down` remove containers e redes do projeto, preservando volumes por padrão. `down -v` remove volumes nomeados declarados e volumes anônimos anexados; volumes externos não são removidos. Anônimos preservados por `down` não são automaticamente reutilizados no próximo `up`. [Compose down](https://docs.docker.com/reference/cli/docker/compose/down/).
+- `sudo docker exec -it NOME sh` inicia outro processo em container **em execução**. `-i` mantém stdin; `-t` fornece pseudo-TTY. Sair desse shell não para o processo principal. A imagem precisa conter `sh`; imagens mínimas podem não ter shell. [Container exec](https://docs.docker.com/reference/cli/docker/container/exec/).
 
 ## IDE desktop com janela no Linux
 
@@ -46,7 +46,7 @@ Nenhum comando GUI, imagem ou Dockerfile de IDE foi validado nesta pesquisa. A e
 
 ## Compose: flags, comandos e atributos são coisas distintas
 
-Usar a família `docker compose`, com Compose Specification, e conferir a versão instalada. A chave superior `version:` está obsoleta e não escolhe o schema. [Version/name](https://docs.docker.com/reference/compose-file/version-and-name/).
+Usar a família `sudo -E docker compose`, com Compose Specification, e conferir a versão instalada. A chave superior `version:` está obsoleta e não escolhe o schema. [Version/name](https://docs.docker.com/reference/compose-file/version-and-name/).
 
 | Categoria | Referência de consulta e seleção didática |
 | --- | --- |

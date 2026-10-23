@@ -16,7 +16,7 @@ with tempfile.TemporaryDirectory(prefix='oficina-ide-comandos-') as directory:
     instructions = (work / 'README-IDE.md').read_text()
     blocks = re.findall(r'```bash\n(.*?)\n```', instructions, re.S)
     for number in [0, 1, 3]:
-        command = blocks[number].replace('docker rm -f ide\n', '')
+        command = blocks[number].replace('sudo docker rm -f ide\n', '').replace('sudo -E docker ', 'docker ')
         command = command.replace('cd "$HOME/oficina-docker"', 'cd ' + shlex.quote(directory))
         command = re.sub(r' up -d(?: --force-recreate)?', ' config --format json', command)
         model = json.loads(subprocess.check_output(['bash', '-c', command], text=True))

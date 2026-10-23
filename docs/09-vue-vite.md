@@ -13,7 +13,7 @@ Na IDE com HOME montado, abra `/host-home/oficina-docker/vue-vite`. O computador
 No terminal do host:
 
 ```bash
-docker run --rm -it --name vue-dev \
+sudo docker run --rm -it --name vue-dev \
   -p 127.0.0.1:5174:5173 \
   --mount "type=bind,src=$HOME/oficina-docker/vue-vite,dst=/app" \
   --mount type=volume,dst=/app/node_modules \
@@ -32,8 +32,8 @@ Ctrl+C encerra Vite. Como usamos `--rm`, esse container e o volume anônimo asso
 Antes de continuar, pressione Ctrl+C no terminal do Vite. Isso encerra vue-dev e libera a porta 5174 para o próximo container.
 
 ```bash
-docker pull joaolsodocker/oficina-vue:1.0.0
-docker run -d --name vue-web \
+sudo docker pull joaolsodocker/oficina-vue:1.0.0
+sudo docker run -d --name vue-web \
   -p 127.0.0.1:5174:80 \
   joaolsodocker/oficina-vue:1.0.0
 ```
@@ -45,8 +45,8 @@ Abra `http://localhost:5174`. A tela inicial é a mesma, mas o servidor agora é
 No capítulo de imagens, leia o Dockerfile que veio no ZIP e construa:
 
 ```bash
-docker build -t meu-vue:1.0.0 "$HOME/oficina-docker/vue-vite"
-docker run -d --name meu-vue \
+sudo docker build -t meu-vue:1.0.0 "$HOME/oficina-docker/vue-vite"
+sudo docker run -d --name meu-vue \
   -p 127.0.0.1:5175:80 \
   meu-vue:1.0.0
 ```
@@ -60,7 +60,7 @@ O estágio Node instala dependências e executa `npm run build`, produzindo `/ap
 ## 5. Limpar somente esses exemplos
 
 ```bash
-docker rm -f vue-web meu-vue
+sudo docker rm -f vue-web meu-vue
 ```
 
 Não é necessário apagar o projeto ou usar prune global.

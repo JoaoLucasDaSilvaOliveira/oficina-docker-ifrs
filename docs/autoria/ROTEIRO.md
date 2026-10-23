@@ -6,7 +6,7 @@ Oficina de 180 minutos para ensino médio, ensino superior e participantes da co
 
 A pessoa distingue imagem de container, explica onde os arquivos estão, executa ferramentas sem instalá-las no host, constrói uma imagem e compartilha uma aplicação por imagens e Compose.
 
-O site está no GitHub Pages. Não há `docker pull` para começar a ler slides, clone de repositório ou script de instalação apresentado à turma. Comandos ficam em diálogo próprio; a tela principal apresenta conceitos, explicações curtas e desenhos didáticos. Notas do instrutor pertencem a este roteiro e aos guias de consulta.
+O site está no GitHub Pages. Não há `sudo docker pull` para começar a ler slides, clone de repositório ou script de instalação apresentado à turma. Comandos ficam em diálogo próprio; a tela principal apresenta conceitos, explicações curtas e desenhos didáticos. Notas do instrutor pertencem a este roteiro e aos guias de consulta.
 
 ## Preparação
 
@@ -32,7 +32,7 @@ O tempo é uma referência de condução. Aprofundamentos e catálogo completo d
 
 Começar pela necessidade de distribuir programas e seu ambiente. Docker foi desenvolvido em Go; um container usa o kernel do host Linux. Em sistemas que precisam de uma VM Linux, o funcionamento inclui essa camada.
 
-Antes da primeira aplicação pronta, apresentar nesta ordem: Docker Hub como origem, repositório e tag, `docker pull` como download para o Docker local e só então `docker run` como criação e execução do container. O slide dedicado ao pull separa baixar de executar; não depender apenas do comando escondido no diálogo.
+Antes da primeira aplicação pronta, apresentar nesta ordem: Docker Hub como origem, repositório e tag, `sudo docker pull` como download para o Docker local e só então `sudo docker run` como criação e execução do container. O slide dedicado ao pull separa baixar de executar; não depender apenas do comando escondido no diálogo.
 
 Usar Alpine para observar arquivos e processos. Separar comando principal de um shell aberto com `exec`. Mostrar que `stop` não remove arquivos, mas `rm` descarta a camada gravável. Relacionar `ps`, `ps -a`, logs e inspect a perguntas concretas. Apresentar os dois pontos de uma referência de imagem como separador da tag e mostrar a procedência no Hub.
 
@@ -52,7 +52,7 @@ Mudar um texto no template para ver a atualização. Depois executar a imagem Vu
 
 ## 4. Construir a própria imagem
 
-Usar primeiro o Go sem dependências, para separar os conceitos. O último argumento de `docker build` escolhe o contexto no host. O `-f` escolhe a receita. `WORKDIR` escolhe o diretório no estágio. `COPY` usa a origem no contexto; o destino relativo segue o WORKDIR. O ponto de `go build .` seleciona o pacote atual.
+Usar primeiro o Go sem dependências, para separar os conceitos. O último argumento de `sudo docker build` escolhe o contexto no host. O `-f` escolhe a receita. `WORKDIR` escolhe o diretório no estágio. `COPY` usa a origem no contexto; o destino relativo segue o WORKDIR. O ponto de `go build .` seleciona o pacote atual.
 
 Evoluir para multi-stage: cada `FROM` inicia um estágio com a base escolhida; `COPY --from=build` lê o resultado do estágio de construção. Sem a flag, lê o contexto. O último estágio é a imagem final por padrão; `--target` permite selecionar outro. Uma imagem `scratch` tem filesystem mesmo sem shell.
 
@@ -64,7 +64,7 @@ Só agora introduzir Compose. O mural vem pronto: web → API → PostgreSQL. Os
 
 Diferenciar nomes de projeto, serviço, imagem, container e rede. Observar `config`, `up`, `ps`, `logs`, `exec`, `stop`, `start` e `down`. Explicar `${VAR:-padrao}`, DNS por nome de serviço, loopback e publicação de portas. Persistir recados com volume nomeado. O overlay de rede aprofunda a separação entre entrada e dados.
 
-A tradução da IDE para Compose é uma comparação opcional com o `docker run` já conhecido, usando ZIP próprio. A referência pesquisável atende curiosidade sobre outras opções.
+A tradução da IDE para Compose é uma comparação opcional com o `sudo docker run` já conhecido, usando ZIP próprio. A referência pesquisável atende curiosidade sobre outras opções.
 
 ## 6. Publicar e trocar
 

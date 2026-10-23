@@ -3,50 +3,50 @@
 <p>Baixe <a href="../downloads/compose-mural.zip">Compose do mural</a> e extraia em <code>HOME/oficina-docker</code>. Devem aparecer <code>compose.app.yaml</code>, <code>compose.rede.yaml</code> e <code>compose.hub.yaml</code>. Todos consomem imagens prontas; não dependem de contexto local de build.</p>
 <h2 id="conferir-iniciar-e-observar">1. Conferir, iniciar e observar</h2>
 <div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>cd &quot;$HOME/oficina-docker&quot;
-docker compose -f compose.app.yaml config
-docker compose -f compose.app.yaml pull
-docker compose -f compose.app.yaml up -d --wait
-docker compose -f compose.app.yaml ps
-docker compose -f compose.app.yaml logs -f --tail 50</code></pre></div>
+sudo -E docker compose -f compose.app.yaml config
+sudo -E docker compose -f compose.app.yaml pull
+sudo -E docker compose -f compose.app.yaml up -d --wait
+sudo -E docker compose -f compose.app.yaml ps
+sudo -E docker compose -f compose.app.yaml logs -f --tail 50</code></pre></div>
 <p>Abra <code>http://localhost:8088</code>. <code>config</code> mostra o modelo resolvido, sem iniciar os serviços. O <code>-f</code> antes do subcomando seleciona o arquivo; o <code>-f</code> de logs acompanha novas mensagens. Ctrl+C sai do acompanhamento sem parar os containers.</p>
 <div class="table-scroll"><table><thead><tr><th>Nome</th><th>Papel</th></tr></thead><tbody><tr><td>oficina-mural</td><td>Projeto Compose</td></tr><tr><td>web, api, db</td><td>Serviços no YAML</td></tr><tr><td>joaolsodocker/oficina-api:1.0.0</td><td>Imagem da API</td></tr><tr><td>oficina-mural-api-1</td><td>Container criado para uma instância da API</td></tr><tr><td>oficina-mural_default</td><td>Rede padrão criada para o projeto</td></tr></tbody></table></div>
-<p><code>docker ps</code> vê todos os containers em execução do daemon selecionado. <code>docker compose -f compose.app.yaml ps</code> filtra o projeto selecionado. Ambos aceitam <code>-a</code> para incluir parados. Compose usa labels de projeto e serviço para identificar seus recursos.</p>
+<p><code>sudo docker ps</code> vê todos os containers em execução do daemon selecionado. <code>sudo -E docker compose -f compose.app.yaml ps</code> filtra o projeto selecionado. Ambos aceitam <code>-a</code> para incluir parados. Compose usa labels de projeto e serviço para identificar seus recursos.</p>
 <h2 id="ciclo-de-vida">2. Ciclo de vida</h2>
-<div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>docker compose -f compose.app.yaml stop
-docker compose -f compose.app.yaml ps -a
-docker compose -f compose.app.yaml start
-docker compose -f compose.app.yaml down
-docker compose -f compose.app.yaml up -d --wait</code></pre></div>
+<div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>sudo -E docker compose -f compose.app.yaml stop
+sudo -E docker compose -f compose.app.yaml ps -a
+sudo -E docker compose -f compose.app.yaml start
+sudo -E docker compose -f compose.app.yaml down
+sudo -E docker compose -f compose.app.yaml up -d --wait</code></pre></div>
 <p>Stop/start preserva as instâncias. Down/up remove e recria os containers e a rede. Volumes nomeados permanecem por padrão. <code>restart</code> não substitui <code>up</code> ao alterar o YAML. <code>down -v</code> remove os volumes abrangidos e descarta os recados, por isso deve ser usado apenas quando essa limpeza for intencional.</p>
 <h2 id="valores-padrao-e-portas">3. Valores padrão e portas</h2>
 <p>No YAML, <code>${APP_BIND:-127.0.0.1}</code> usa APP_BIND se estiver definido e não vazio; caso contrário usa 127.0.0.1. A publicação <code>127.0.0.1:8088:8080</code> liga porta 8088 do host à 8080 do container apenas na interface local.</p>
 <p>A rede entre serviços usa os nomes <code>api</code> e <code>db</code>. A aplicação no navegador usa o endereço do host. <code>localhost</code> dentro da API não aponta para o banco.</p>
 <h2 id="volume-nomeado">4. Volume nomeado</h2>
 <p>Antes de explorar o volume PostgreSQL, esta experiência menor permite observar persistência:</p>
-<div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>docker volume create dados-lab
-docker run --rm --mount type=volume,src=dados-lab,dst=/dados \
+<div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>sudo docker volume create dados-lab
+sudo docker run --rm --mount type=volume,src=dados-lab,dst=/dados \
   alpine:3.22 sh -c &#x27;printf &quot;persisti\n&quot; &gt; /dados/recado.txt&#x27;
-docker run --rm --mount type=volume,src=dados-lab,dst=/dados \
+sudo docker run --rm --mount type=volume,src=dados-lab,dst=/dados \
   alpine:3.22 cat /dados/recado.txt
-docker volume inspect dados-lab</code></pre></div>
+sudo docker volume inspect dados-lab</code></pre></div>
 <p>O primeiro container é removido por <code>--rm</code>, mas o volume nomeado continua e pode ser montado pelo segundo. O PostgreSQL usa esse princípio para preservar os recados do mural.</p>
 <h2 id="traduzir-a-ide-ja-conhecida-para-compose">5. Traduzir a IDE já conhecida para Compose</h2>
 <p>Baixe <a href="../downloads/compose-ide.zip">Compose da IDE</a> e extraia em <code>HOME/oficina-docker</code>. O ZIP inclui estes comandos em <code>README-IDE.md</code>. Copie cada bloco completo no Bash; não é necessário editar YAML, exportar variáveis separadamente ou localizar o arquivo de autorização.</p>
 <h2 id="ide-sem-acesso-a-pasta-pessoal-linux-mint-x11">1. IDE sem acesso à pasta pessoal — Linux Mint / X11</h2>
 <p>Feche a janela da IDE usada no exercício anterior. A primeira linha remove apenas esse container de demonstração.</p>
-<div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>docker rm -f ide
+<div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>sudo docker rm -f ide
 cd &quot;$HOME/oficina-docker&quot;
 LOCAL_UID=&quot;$(id -u)&quot; LOCAL_GID=&quot;$(id -g)&quot; \
 HOST_HOSTNAME=&quot;$(hostname)&quot; XAUTHORITY=&quot;${XAUTHORITY:-$HOME/.Xauthority}&quot; \
-docker compose -f compose.ide.yaml up -d</code></pre></div>
+sudo -E docker compose -f compose.ide.yaml up -d</code></pre></div>
 <p>O comando identifica seu usuário e sua sessão gráfica automaticamente. Usa a autorização indicada pela sessão; se essa variável estiver vazia, usa <code>$HOME/.Xauthority</code>, o caminho padrão da sessão X11 do Mint. Nenhuma permissão global de acesso ao display é alterada.</p>
 <h2 id="ide-com-acesso-a-pasta-pessoal">2. IDE com acesso à pasta pessoal</h2>
 <div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>cd &quot;$HOME/oficina-docker&quot;
 LOCAL_UID=&quot;$(id -u)&quot; LOCAL_GID=&quot;$(id -g)&quot; \
 HOST_HOSTNAME=&quot;$(hostname)&quot; XAUTHORITY=&quot;${XAUTHORITY:-$HOME/.Xauthority}&quot; \
-docker compose -f compose.ide.yaml -f compose.ide.bind.yaml up -d --force-recreate</code></pre></div>
+sudo -E docker compose -f compose.ide.yaml -f compose.ide.bind.yaml up -d --force-recreate</code></pre></div>
 <p>Agora a pasta pessoal aparece em <code>/host-home</code>. As alterações feitas ali são nos arquivos reais do computador. O comando fornece novamente todos os valores necessários; não depende de um <code>export</code> executado antes.</p>
-<p>Para encerrar, execute <code>docker compose -f compose.ide.yaml down</code> na pasta dos arquivos. A alternativa Wayland também possui um comando completo no README do ZIP.</p>
+<p>Para encerrar, execute <code>sudo -E docker compose -f compose.ide.yaml down</code> na pasta dos arquivos. A alternativa Wayland também possui um comando completo no README do ZIP.</p>
 <h2 id="montagem-e-permissoes">6. Montagem e permissões</h2>
 <p>Um bind aponta para uma pasta do host; um volume é administrado pelo Docker. Montar sobre um diretório oculta os arquivos anteriores naquele caminho, sem mesclar ou alterar a imagem. Acesso de escrita continua sujeito a UID/GID e permissões. Montar HOME não transforma o processo em root.</p>
 <p>Fontes: <a href="https://docs.docker.com/reference/cli/docker/compose/">Compose</a>, <a href="https://docs.docker.com/engine/storage/bind-mounts/">bind mounts</a>, <a href="https://docs.docker.com/engine/storage/volumes/">volumes</a>.</p><footer>Oficina Docker · Material de acompanhamento</footer></main><script>document.querySelectorAll('.code-bar button').forEach(button=>button.addEventListener('click',async()=>{const text=button.closest('.guide-code').querySelector('code').textContent;try{if(navigator.clipboard&&window.isSecureContext)await navigator.clipboard.writeText(text);else{const input=document.createElement('textarea');input.value=text;document.body.append(input);input.select();if(!document.execCommand('copy'))throw Error();input.remove();}button.textContent='Copiado';setTimeout(()=>button.textContent='Copiar',1800);}catch{button.textContent='Selecione o texto';}}));</script></body></html>

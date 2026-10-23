@@ -5,7 +5,7 @@ Execute no Bash do terminal da sessão gráfica, em qualquer diretório. Antes d
 ## 1. Baixar a imagem pronta
 
 ```bash
-docker pull joaolsodocker/oficina-ide:1.0.0
+sudo docker pull joaolsodocker/oficina-ide:1.0.0
 ```
 
 O instrutor constrói e publica essa imagem antes da oficina. Não é necessário ter Dockerfile, pasta exemplos/ide, VS Code ou SDK no computador do participante.
@@ -13,7 +13,7 @@ O instrutor constrói e publica essa imagem antes da oficina. Não é necessári
 ## 2. Abrir sem acesso à pasta pessoal: X11 ou XWayland
 
 ```bash
-docker run -d --name ide \
+sudo docker run -d --name ide \
   --user "$(id -u):$(id -g)" \
   --hostname "$(hostname)" \
   -e DISPLAY -e XAUTHORITY=/tmp/oficina.xauth \
@@ -41,16 +41,16 @@ O HOME interno da imagem é /tmp para guardar configurações do editor com dife
 ## 3. Observar e reabrir
 
 ```bash
-docker ps
-docker top ide
-docker exec -it ide sh
+sudo docker ps
+sudo docker top ide
+sudo docker exec -it ide sh
 ```
 
 Dentro do container, execute pwd, id e ls -la /workspace, depois exit. Feche a janela. O comando code --wait termina e o container para. Confira e reabra o mesmo:
 
 ```bash
-docker ps -a
-docker start ide
+sudo docker ps -a
+sudo docker start ide
 ```
 
 O recado da camada permanece no mesmo container. Remover o container elimina essa camada, mas não a imagem.
@@ -60,8 +60,8 @@ O recado da camada permanece no mesmo container. Remover o container elimina ess
 Feche a IDE e use somente os arquivos descartáveis da primeira experiência. A primeira linha remove aquele container.
 
 ```bash
-docker rm -f ide
-docker run -d --name ide \
+sudo docker rm -f ide
+sudo docker run -d --name ide \
   --user "$(id -u):$(id -g)" \
   --hostname "$(hostname)" \
   -e DISPLAY -e XAUTHORITY=/tmp/oficina.xauth \
@@ -89,7 +89,7 @@ Agora abra `/host-home/oficina-docker/go-soma/main.go` na IDE. É o arquivo baix
 Para executar esse fonte sem Go instalado no computador, no terminal do host:
 
 ```bash
-docker run --rm --user "$(id -u):$(id -g)" \
+sudo docker run --rm --user "$(id -u):$(id -g)" \
   --mount "type=bind,src=$HOME/oficina-docker/go-soma,dst=/src,readonly" \
   -w /src -e GOCACHE=/tmp/go-cache \
   golang:1.27.3-alpine go run main.go
@@ -102,7 +102,7 @@ O bind entrega o fonte ao compilador do container. `go run main.go` compila e ex
 Se optar por Wayland nativo, use este comando no lugar do X11. Não mantenha outro container chamado ide. A primeira experiência continua sem pasta pessoal montada.
 
 ```bash
-docker run -d --name ide \
+sudo docker run -d --name ide \
   --user "$(id -u):$(id -g)" \
   -e XDG_RUNTIME_DIR=/tmp/runtime-aluno \
   -e WAYLAND_DISPLAY=wayland-0 \
@@ -118,9 +118,9 @@ Se WAYLAND_DISPLAY já for um caminho absoluto, use-o diretamente como origem do
 ## 6. Diagnóstico
 
 ```bash
-docker ps -a
-docker logs --tail 50 ide
-docker inspect ide
+sudo docker ps -a
+sudo docker logs --tail 50 ide
+sudo docker inspect ide
 ```
 
 Copie os comandos completos no Bash, no terminal da sessão gráfica. Eles já identificam a autorização da sessão; o aluno não precisa procurar arquivos nem editar caminhos. Se a janela não abrir no laboratório, o instrutor confere a integração gráfica antes da atividade.

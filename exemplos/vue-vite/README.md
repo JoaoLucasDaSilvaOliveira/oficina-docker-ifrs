@@ -9,7 +9,7 @@ Licença original: MIT, preservada em `LICENSE`. O `package-lock.json` fixa as d
 Na pasta extraída, sem Node/npm instalados no computador:
 
 ```bash
-docker run --rm -it \
+sudo docker run --rm -it \
   --mount "type=bind,src=$PWD,dst=/app" \
   --mount type=volume,dst=/app/node_modules --workdir /app \
   -p 127.0.0.1:5174:5173 node:24-alpine \
@@ -21,8 +21,8 @@ Abra http://localhost:5174. A opção `--host 0.0.0.0` faz o Vite escutar na int
 Para construir a imagem de produção e servir a mesma tela:
 
 ```bash
-docker build -t joaolsodocker/oficina-vue:1.0.0 .
-docker run --rm --name vue -p 127.0.0.1:8081:80 joaolsodocker/oficina-vue:1.0.0
+sudo docker build -t joaolsodocker/oficina-vue:1.0.0 .
+sudo docker run --rm --name vue -p 127.0.0.1:8081:80 joaolsodocker/oficina-vue:1.0.0
 ```
 
 Abra http://localhost:8081. Aqui o Node executa apenas durante o build; o container final usa Nginx. A aplicação não tem SSR.

@@ -9,9 +9,9 @@ Docker Engine e plugin Compose devem estar disponíveis no Linux do laboratório
 Os comandos usam Bash. Se seu terminal for Fish, execute `bash` antes de copiar expressões como `${VAR:-padrao}`.
 
 ```bash
-docker version
-docker compose version
-docker info
+sudo docker version
+sudo -E docker compose version
+sudo docker info
 echo "$XDG_SESSION_TYPE"
 echo "$DISPLAY"
 echo "$XAUTHORITY"
@@ -26,8 +26,8 @@ Quando indicado, baixe [main.go](../downloads/main.go). Pelo gerenciador de arqu
 Esse programa é o mesmo da imagem `joaolsodocker/oficina-go:1.0.0`, que imprime uma soma e termina. Não precisa de banco, frontend ou módulo Go para o primeiro experimento.
 
 ```bash
-docker pull joaolsodocker/oficina-go:1.0.0
-docker run --rm joaolsodocker/oficina-go:1.0.0
+sudo docker pull joaolsodocker/oficina-go:1.0.0
+sudo docker run --rm joaolsodocker/oficina-go:1.0.0
 ```
 
 O término do processo é o comportamento esperado. Não é um servidor aguardando conexões.
@@ -56,6 +56,8 @@ A primeira execução já compartilha os recursos da sessão gráfica. Isso perm
 
 ## 5. Docker Hub
 
-As imagens de apoio são do instrutor, no namespace `joaolsodocker`. Quem compartilhar uma imagem própria usa sua própria conta no Hub e executa `docker login` quando indicado. A publicação do site é independente das imagens.
+As imagens de apoio são do instrutor, no namespace `joaolsodocker`. Quem compartilhar uma imagem própria usa sua própria conta no Hub e executa `sudo docker login` quando indicado. A publicação do site é independente das imagens.
 
 Fontes: [Docker](https://docs.docker.com/get-started/docker-overview/), [Compose](https://docs.docker.com/compose/).
+
+Os comandos Docker usam `sudo`. No Compose, `sudo -E` preserva as variáveis da sessão necessárias à IDE e aos caminhos locais.

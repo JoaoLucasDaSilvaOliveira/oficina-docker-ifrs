@@ -5,7 +5,7 @@
 <p>Na IDE com HOME montado, abra <code>/host-home/oficina-docker/vue-vite</code>. O computador não precisa de Node ou npm instalados.</p>
 <h2 id="executar-em-desenvolvimento">2. Executar em desenvolvimento</h2>
 <p>No terminal do host:</p>
-<div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>docker run --rm -it --name vue-dev \
+<div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>sudo docker run --rm -it --name vue-dev \
   -p 127.0.0.1:5174:5173 \
   --mount &quot;type=bind,src=$HOME/oficina-docker/vue-vite,dst=/app&quot; \
   --mount type=volume,dst=/app/node_modules \
@@ -16,21 +16,21 @@
 <p>Ctrl+C encerra Vite. Como usamos <code>--rm</code>, esse container e o volume anônimo associado são removidos ao terminar. O código do bind permanece.</p>
 <h2 id="executar-a-imagem-pronta">3. Executar a imagem pronta</h2>
 <p>Antes de continuar, pressione Ctrl+C no terminal do Vite. Isso encerra vue-dev e libera a porta 5174 para o próximo container.</p>
-<div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>docker pull joaolsodocker/oficina-vue:1.0.0
-docker run -d --name vue-web \
+<div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>sudo docker pull joaolsodocker/oficina-vue:1.0.0
+sudo docker run -d --name vue-web \
   -p 127.0.0.1:5174:80 \
   joaolsodocker/oficina-vue:1.0.0</code></pre></div>
 <p>Abra <code>http://localhost:5174</code>. A tela inicial é a mesma, mas o servidor agora é Nginx. A imagem contém os arquivos já gerados pelo build; não precisa acessar a pasta local nem executar npm. Alterações no bind do ambiente de desenvolvimento não mudam essa imagem pronta.</p>
 <h2 id="construir-sua-versao">4. Construir sua versão</h2>
 <p>No capítulo de imagens, leia o Dockerfile que veio no ZIP e construa:</p>
-<div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>docker build -t meu-vue:1.0.0 &quot;$HOME/oficina-docker/vue-vite&quot;
-docker run -d --name meu-vue \
+<div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>sudo docker build -t meu-vue:1.0.0 &quot;$HOME/oficina-docker/vue-vite&quot;
+sudo docker run -d --name meu-vue \
   -p 127.0.0.1:5175:80 \
   meu-vue:1.0.0</code></pre></div>
 <p>Abra <code>http://localhost:5175</code> para ver sua imagem.</p>
 <p>O estágio Node instala dependências e executa <code>npm run build</code>, produzindo <code>/app/dist</code>. O estágio Nginx recebe apenas esse diretório, mais a configuração HTTP. O JavaScript entregue pelo Nginx executa no navegador. Node e o servidor Vite não participam da execução final.</p>
 <p><code>COPY --from=build /app/dist/ /usr/share/nginx/html/</code> lê a origem no estágio chamado build. A configuração própria do Nginx trata rotas do frontend. <code>EXPOSE 80</code> documenta; <code>-p</code> publica a porta no host.</p>
 <h2 id="limpar-somente-esses-exemplos">5. Limpar somente esses exemplos</h2>
-<div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>docker rm -f vue-web meu-vue</code></pre></div>
+<div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>sudo docker rm -f vue-web meu-vue</code></pre></div>
 <p>Não é necessário apagar o projeto ou usar prune global.</p>
 <p>Fontes: <a href="https://vite.dev/guide/static-deploy.html">Vite: deploy estático</a>, <a href="https://vite.dev/config/server-options.html">Vite: opções de servidor</a>, <a href="https://github.com/nodejs/docker-node">imagem Node</a>, <a href="https://hub.docker.com/_/nginx">imagem Nginx</a>.</p><footer>Oficina Docker · Material de acompanhamento</footer></main><script>document.querySelectorAll('.code-bar button').forEach(button=>button.addEventListener('click',async()=>{const text=button.closest('.guide-code').querySelector('code').textContent;try{if(navigator.clipboard&&window.isSecureContext)await navigator.clipboard.writeText(text);else{const input=document.createElement('textarea');input.value=text;document.body.append(input);input.select();if(!document.execCommand('copy'))throw Error();input.remove();}button.textContent='Copiado';setTimeout(()=>button.textContent='Copiar',1800);}catch{button.textContent='Selecione o texto';}}));</script></body></html>

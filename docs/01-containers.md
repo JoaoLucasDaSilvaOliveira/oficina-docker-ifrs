@@ -5,23 +5,23 @@ Tempo: 25 minutos. Execute em qualquer diretório do host, no terminal do host, 
 ## 1. Baixar a imagem e criar uma instância
 
 ```bash
-docker pull alpine:3.22
-docker image ls
-docker run -d --name fs-lab alpine:3.22 sleep infinity
-docker ps
-docker ps -a
+sudo docker pull alpine:3.22
+sudo docker image ls
+sudo docker run -d --name fs-lab alpine:3.22 sleep infinity
+sudo docker ps
+sudo docker ps -a
 ```
 
 `pull` baixa uma imagem. `run` cria um container novo e inicia seu processo. `-d` desacopla o terminal, `--name` escolhe o nome. `sleep infinity` mantém o processo principal ativo para explorar o ambiente. Não usamos `--rm`, pois queremos observar a instância parada.
 
-Se `fs-lab` já existir, observe com `docker ps -a` antes de decidir se vai usá-lo ou removê-lo. O nome identifica uma instância, não a imagem.
+Se `fs-lab` já existir, observe com `sudo docker ps -a` antes de decidir se vai usá-lo ou removê-lo. O nome identifica uma instância, não a imagem.
 
 ## 2. Abrir outro processo
 
 No host:
 
 ```bash
-docker exec -it fs-lab sh
+sudo docker exec -it fs-lab sh
 ```
 
 Agora **dentro do container**:
@@ -42,11 +42,11 @@ exit
 De volta ao host:
 
 ```bash
-docker stop fs-lab
-docker ps
-docker ps -a
-docker start fs-lab
-docker exec fs-lab cat /tmp/recado.txt
+sudo docker stop fs-lab
+sudo docker ps
+sudo docker ps -a
+sudo docker start fs-lab
+sudo docker exec fs-lab cat /tmp/recado.txt
 ```
 
 Resultado esperado: o arquivo permanece. `stop` encerra o processo principal, preservando o container e sua camada gravável. `restart` também preserva essa camada.
@@ -54,9 +54,9 @@ Resultado esperado: o arquivo permanece. `stop` encerra o processo principal, pr
 ## 4. Remover e recriar
 
 ```bash
-docker rm -f fs-lab
-docker run -d --name fs-lab alpine:3.22 sleep infinity
-docker exec fs-lab cat /tmp/recado.txt
+sudo docker rm -f fs-lab
+sudo docker run -d --name fs-lab alpine:3.22 sleep infinity
+sudo docker exec fs-lab cat /tmp/recado.txt
 ```
 
 Resultado esperado da última linha: erro de arquivo inexistente. O novo container usa a mesma imagem, mas tem outra camada gravável. O nome igual não transfere a camada anterior. A imagem Alpine permaneceu intacta.
@@ -66,14 +66,14 @@ Resultado esperado da última linha: erro de arquivo inexistente. O novo contain
 ## 5. Ler o que o Docker sabe
 
 ```bash
-docker inspect fs-lab
-docker inspect --format '{{.State.Status}}' fs-lab
-docker inspect --format '{{.Config.Image}}' fs-lab
-docker inspect --format '{{json .Mounts}}' fs-lab
-docker logs --tail 50 fs-lab
-docker top fs-lab
-docker stats --no-stream fs-lab
-docker diff fs-lab
+sudo docker inspect fs-lab
+sudo docker inspect --format '{{.State.Status}}' fs-lab
+sudo docker inspect --format '{{.Config.Image}}' fs-lab
+sudo docker inspect --format '{{json .Mounts}}' fs-lab
+sudo docker logs --tail 50 fs-lab
+sudo docker top fs-lab
+sudo docker stats --no-stream fs-lab
+sudo docker diff fs-lab
 ```
 
 `inspect` mostra estado e configuração. `logs` mostra stdout/stderr capturados; `sleep` não produz saída e logs vazios são normais. `top` mostra os processos. `stats` mostra consumo. `diff` mostra alterações da camada, não é backup dos volumes.
@@ -83,9 +83,9 @@ Em `ps`, observe ID, imagem, comando, criação, estado, portas e nome. A coluna
 ## 6. Uma imagem, dois containers
 
 ```bash
-docker run -d --name fs-outro alpine:3.22 sleep infinity
-docker exec fs-outro ls /tmp
-docker rm -f fs-outro
+sudo docker run -d --name fs-outro alpine:3.22 sleep infinity
+sudo docker exec fs-outro ls /tmp
+sudo docker rm -f fs-outro
 ```
 
 Cada instância tem sua própria camada. Mais tarde, montaremos armazenamento externo à instância.

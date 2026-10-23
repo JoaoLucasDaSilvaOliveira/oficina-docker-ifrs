@@ -8,9 +8,9 @@ Introduza a falha:
 
 ```bash
 export DB_HOST=localhost
-docker compose -f compose.app.yaml up -d --force-recreate api
-docker compose -f compose.app.yaml ps -a
-docker compose -f compose.app.yaml logs --tail 30 api
+sudo -E docker compose -f compose.app.yaml up -d --force-recreate api
+sudo -E docker compose -f compose.app.yaml ps -a
+sudo -E docker compose -f compose.app.yaml logs --tail 30 api
 ```
 
 Resultado esperado: a API procura o PostgreSQL no próprio container e aguarda até falhar a inicialização. `config` permite observar o valor resolvido. Alterar variável no shell não modifica um processo já em execução; por isso recriamos a API.
@@ -19,8 +19,8 @@ Recuperação:
 
 ```bash
 unset DB_HOST
-docker compose -f compose.app.yaml up -d --force-recreate --wait api
-docker compose -f compose.app.yaml up -d --wait web
+sudo -E docker compose -f compose.app.yaml up -d --force-recreate --wait api
+sudo -E docker compose -f compose.app.yaml up -d --wait web
 ```
 
 Se você também gravou `DB_HOST=localhost` em `.env`, remova ou corrija essa linha para `db`; `unset` só remove a variável do shell.
@@ -30,8 +30,8 @@ Se você também gravou `DB_HOST=localhost` em `.env`, remova ou corrija essa li
 Abra `http://localhost:8089`, mantendo a configuração padrão. Compare com a saída:
 
 ```bash
-docker compose -f compose.app.yaml ps
-docker compose -f compose.app.yaml port web 8080
+sudo -E docker compose -f compose.app.yaml ps
+sudo -E docker compose -f compose.app.yaml port web 8080
 ```
 
 Recuperação: use a porta publicada exibida, normalmente `http://localhost:8088`. Não altere código Go para corrigir um endereço digitado errado no navegador.
@@ -41,7 +41,7 @@ Recuperação: use a porta publicada exibida, normalmente `http://localhost:8088
 A primeira IDE abre /workspace; a segunda abre /host-home, que é HOME do computador. Não há pasta exemplos/mural presumida no host. Compare:
 
 ```bash
-docker inspect ide
+sudo docker inspect ide
 ```
 
 O comando mostra os Mounts do container ide. Se a IDE já estiver sendo gerenciada pelo Compose, encerre-a com docker compose -f compose.ide.yaml down no lugar de docker rm. A montagem não mescla automaticamente os diretórios. Não usar `rm -rf` para tentar fazer os arquivos ocultos reaparecerem.
@@ -57,7 +57,7 @@ Recuperação para a oficina: voltar às credenciais com as quais aquele volume 
 Confirme a referência resolvida:
 
 ```bash
-docker compose -f compose.app.yaml -f compose.hub.yaml config --images
+sudo -E docker compose -f compose.app.yaml -f compose.hub.yaml config --images
 ```
 
 Confira API_IMAGE e execute pull api. Os Compose de consumo não possuem build. Se usou --pull never no exercício de imagem local, volte ao comportamento normal para buscar a imagem publicada.
@@ -67,21 +67,21 @@ Confira API_IMAGE e execute pull api. Os Compose de consumo não possuem build. 
 Encerrar sem apagar o banco; a última linha remove apenas a IDE de demonstração e sua camada gravável:
 
 ```bash
-docker compose -f compose.app.yaml down
-docker rm -f ide
+sudo -E docker compose -f compose.app.yaml down
+sudo docker rm -f ide
 ```
 
 Limpar os containers e o volume do laboratório básico, se ainda existirem:
 
 ```bash
-docker rm -f fs-lab
-docker volume rm dados-lab
+sudo docker rm -f fs-lab
+sudo docker volume rm dados-lab
 ```
 
 Cada comando pode informar recurso inexistente caso já tenha sido removido; isso não exige limpeza global. Para apagar somente os dados do mural:
 
 ```bash
-docker compose -f compose.app.yaml down -v
+sudo -E docker compose -f compose.app.yaml down -v
 ```
 
 Não usar comandos globais de prune para encerrar a oficina em uma máquina que pode ter outros projetos.

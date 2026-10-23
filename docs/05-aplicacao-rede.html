@@ -5,48 +5,48 @@
 <p>O navegador acessa o serviço <code>web</code> pela porta 8088 do host. Nginx serve o frontend e encaminha <code>/api/</code> para <code>api:8080</code>. A API em Go usa <code>db:5432</code> para o PostgreSQL. Os serviços participam da rede padrão do projeto <code>oficina-mural</code>. O banco usa o volume <code>dados-postgres</code>.</p>
 <p>A IDE continua desktop. O navegador aparece aqui porque o mural é uma aplicação web.</p>
 <h2 id="subir-e-verificar">2. Subir e verificar</h2>
-<div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>docker compose -f compose.app.yaml config
-docker compose -f compose.app.yaml pull
-docker compose -f compose.app.yaml up -d --wait
-docker compose -f compose.app.yaml ps
-docker compose -f compose.app.yaml logs --tail 30 api</code></pre></div>
+<div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>sudo -E docker compose -f compose.app.yaml config
+sudo -E docker compose -f compose.app.yaml pull
+sudo -E docker compose -f compose.app.yaml up -d --wait
+sudo -E docker compose -f compose.app.yaml ps
+sudo -E docker compose -f compose.app.yaml logs --tail 30 api</code></pre></div>
 <p>Abra <code>http://localhost:8088</code>. Escreva um nome e um recado. Resultado esperado: confirmação de gravação e o recado na lista. O rodapé mostra versão e hostname da API para relacionar interface e processo.</p>
 <p>A API valida nome de 1 a 40 caracteres e recado de 1 a 280, limita o corpo JSON, usa parâmetros nas consultas e devolve mensagens de erro sem expor a configuração do banco. O frontend escreve os recados com <code>textContent</code>, de modo que o conteúdo é exibido como texto.</p>
 <h2 id="inspecionar-pelo-lado-do-banco">3. Inspecionar pelo lado do banco</h2>
-<div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>docker compose -f compose.app.yaml exec db sh</code></pre></div>
+<div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>sudo -E docker compose -f compose.app.yaml exec db sh</code></pre></div>
 <p>Dentro do container do banco:</p>
 <div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>psql -U &quot;$POSTGRES_USER&quot; -d &quot;$POSTGRES_DB&quot; \
   -c &#x27;SELECT id, author, text, created_at FROM messages ORDER BY id DESC LIMIT 5;&#x27;
 exit</code></pre></div>
 <p>Resultado esperado: os recados que aparecem na página. <code>psql</code> pertence à imagem do PostgreSQL; não foi instalado no host.</p>
 <h2 id="prontidao-e-vida-do-processo">4. Prontidão e vida do processo</h2>
-<div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>docker compose -f compose.app.yaml exec -T api /api -healthcheck</code></pre></div>
+<div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>sudo -E docker compose -f compose.app.yaml exec -T api /api -healthcheck</code></pre></div>
 <p>A verificação retorna código zero quando <code>/readyz</code> consegue consultar o banco. <code>/healthz</code> identifica um processo HTTP vivo; <code>/readyz</code> inclui disponibilidade do banco. A API cria a tabela na inicialização e aguarda o banco por até 60 segundos. Depois de iniciar, o pool de conexões permite a recuperação de conexões quando o banco volta.</p>
 <p>O Compose usa <code>depends_on</code> com <code>condition: service_healthy</code>. Um healthcheck testa somente a condição programada. <code>pg_isready</code> não verifica todas as tabelas, e marcar um container como unhealthy não implementa, por si, seu reinício.</p>
 <h2 id="persistencia-real">5. Persistência real</h2>
 <p>Publique um recado e execute:</p>
-<div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>docker compose -f compose.app.yaml down
-docker compose -f compose.app.yaml up -d --wait</code></pre></div>
+<div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>sudo -E docker compose -f compose.app.yaml down
+sudo -E docker compose -f compose.app.yaml up -d --wait</code></pre></div>
 <p>Atualize o navegador. O recado permanece no volume nomeado. A imagem da API e a camada dos novos containers não contêm esses dados.</p>
 <p>Para apagar os recados deliberadamente, apenas no ambiente de exercício:</p>
-<div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>docker compose -f compose.app.yaml down -v
-docker compose -f compose.app.yaml up -d --wait</code></pre></div>
+<div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>sudo -E docker compose -f compose.app.yaml down -v
+sudo -E docker compose -f compose.app.yaml up -d --wait</code></pre></div>
 <p>Agora o volume novo começa vazio. Essa limpeza só ocorre ao executar explicitamente o comando com -v.</p>
 <h2 id="uma-dependencia-fica-indisponivel">6. Uma dependência fica indisponível</h2>
-<div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>docker compose -f compose.app.yaml stop db</code></pre></div>
+<div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>sudo -E docker compose -f compose.app.yaml stop db</code></pre></div>
 <p>Tente publicar. Resultado esperado: uma mensagem de falha, sem afirmar que o recado foi salvo. Observe:</p>
-<div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>docker compose -f compose.app.yaml logs --tail 30 api
-docker compose -f compose.app.yaml start db</code></pre></div>
+<div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>sudo -E docker compose -f compose.app.yaml logs --tail 30 api
+sudo -E docker compose -f compose.app.yaml start db</code></pre></div>
 <p>Depois que o banco estiver pronto, atualize e publique novamente. A API não precisa de uma nova imagem para essa recuperação.</p>
 <h2 id="rede-sem-decorar-enderecos-ip">7. Rede sem decorar endereços IP</h2>
 <ul><li><code>localhost</code> no processo da API aponta para o próprio container da API.</li><li><code>db</code> resolve o serviço PostgreSQL dentro da rede Compose.</li><li><code>api</code> resolve a API para o Nginx na mesma rede.</li><li>O JavaScript roda no navegador do host e usa <code>/api</code>, na mesma origem da página. O Nginx encaminha internamente; o navegador não precisa resolver <code>api</code>.</li><li>A publicação <code>127.0.0.1:8088:8080</code> significa endereço do host, porta do host e porta do serviço. <code>EXPOSE</code> sozinho não faz isso.</li><li>O servidor Go escuta em <code>:8080</code>, alcançável pelas interfaces do container, e não apenas no loopback interno.</li></ul>
 <h2 id="aprofundamento-opcional-duas-redes">8. Aprofundamento opcional: duas redes</h2>
 <p>O overlay <code>compose.rede.yaml</code> coloca web e API na rede <code>entrada</code>, e API e banco na rede <code>dados</code>. O banco deixa de compartilhar uma rede com o frontend. A rede de dados é interna.</p>
-<div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>docker compose -f compose.app.yaml -f compose.rede.yaml config
-docker compose -f compose.app.yaml -f compose.rede.yaml up -d --wait
-docker network inspect oficina-mural_dados</code></pre></div>
+<div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>sudo -E docker compose -f compose.app.yaml -f compose.rede.yaml config
+sudo -E docker compose -f compose.app.yaml -f compose.rede.yaml up -d --wait
+sudo docker network inspect oficina-mural_dados</code></pre></div>
 <p>A API continua usando <code>db:5432</code>, mas o nome do banco não é disponibilizado ao frontend por essa rede. Inspecione os membros e compare com o desenho. Esse isolamento de rede não substitui credenciais ou controles da aplicação.</p>
-<p>Para voltar à configuração inicial, execute <code>docker compose -f compose.app.yaml up -d --wait</code>. O volume nomeado continua o mesmo.</p>
+<p>Para voltar à configuração inicial, execute <code>sudo -E docker compose -f compose.app.yaml up -d --wait</code>. O volume nomeado continua o mesmo.</p>
 <h2 id="rotas-da-api">9. Rotas da API</h2>
 <div class="table-scroll"><table><thead><tr><th>Método e rota</th><th>Resultado</th></tr></thead><tbody><tr><td>GET /healthz</td><td>Processo HTTP e versão</td></tr><tr><td>GET /readyz</td><td>Disponibilidade do banco</td></tr><tr><td>GET /api/info</td><td>Hostname e versão, sem credenciais</td></tr><tr><td>GET /api/messages</td><td>Até 100 recados, mais recentes primeiro</td></tr><tr><td>POST /api/messages</td><td>JSON com author e text; retorna 201</td></tr><tr><td>DELETE /api/messages/ID</td><td>Exclui um recado e retorna 204</td></tr></tbody></table></div>
 <p>Fontes: <a href="https://docs.docker.com/compose/how-tos/networking/">rede Compose</a>, <a href="https://docs.docker.com/compose/how-tos/startup-order/">prontidão</a>, <a href="https://hub.docker.com/_/postgres">imagem PostgreSQL</a>, <a href="https://github.com/jackc/pgx">pgx</a>.</p><footer>Oficina Docker · Material de acompanhamento</footer></main><script>document.querySelectorAll('.code-bar button').forEach(button=>button.addEventListener('click',async()=>{const text=button.closest('.guide-code').querySelector('code').textContent;try{if(navigator.clipboard&&window.isSecureContext)await navigator.clipboard.writeText(text);else{const input=document.createElement('textarea');input.value=text;document.body.append(input);input.select();if(!document.execCommand('copy'))throw Error();input.remove();}button.textContent='Copiado';setTimeout(()=>button.textContent='Copiar',1800);}catch{button.textContent='Selecione o texto';}}));</script></body></html>

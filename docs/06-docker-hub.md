@@ -13,9 +13,9 @@ Uma tag local curta não é automaticamente o repositório da sua conta. Para pu
 Depois de construir sua imagem `minha-soma:1.0.0`:
 
 ```bash
-docker login
-docker tag minha-soma:1.0.0 SEUUSUARIO/oficina-go:1.0.0
-docker push SEUUSUARIO/oficina-go:1.0.0
+sudo docker login
+sudo docker tag minha-soma:1.0.0 SEUUSUARIO/oficina-go:1.0.0
+sudo docker push SEUUSUARIO/oficina-go:1.0.0
 ```
 
 Substitua SEUUSUARIO por sua conta ou organização no Docker Hub. A pessoa executa login e push explicitamente; nenhum script de materiais publica imagens ou compartilha credenciais.
@@ -23,8 +23,8 @@ Substitua SEUUSUARIO por sua conta ou organização no Docker Hub. A pessoa exec
 ## 3. Executar a imagem do colega
 
 ```bash
-docker pull COLEGA/oficina-go:1.0.0
-docker run --rm COLEGA/oficina-go:1.0.0
+sudo docker pull COLEGA/oficina-go:1.0.0
+sudo docker run --rm COLEGA/oficina-go:1.0.0
 ```
 
 Troque COLEGA pelo namespace escolhido. A mensagem impressa confirma a versão do programa recebido. O colega não precisa baixar seu fonte, Dockerfile ou compilador.
@@ -32,14 +32,14 @@ Troque COLEGA pelo namespace escolhido. A mensagem impressa confirma a versão d
 O mesmo vale para o Vue:
 
 ```bash
-docker tag meu-vue:1.0.0 SEUUSUARIO/oficina-vue:1.0.0
-docker push SEUUSUARIO/oficina-vue:1.0.0
+sudo docker tag meu-vue:1.0.0 SEUUSUARIO/oficina-vue:1.0.0
+sudo docker push SEUUSUARIO/oficina-vue:1.0.0
 ```
 
 Em outra máquina, ou depois de o colega publicar:
 
 ```bash
-docker run -d --name front-colega \
+sudo docker run -d --name front-colega \
   -p 127.0.0.1:8083:80 \
   COLEGA/oficina-vue:1.0.0
 ```
@@ -53,9 +53,9 @@ No aprofundamento do mural, a configuração permite selecionar outra imagem com
 ```bash
 cd "$HOME/oficina-docker"
 export API_IMAGE=COLEGA/oficina-api:1.0.0
-docker compose -f compose.app.yaml -f compose.hub.yaml config --images
-docker compose -f compose.app.yaml -f compose.hub.yaml pull api
-docker compose -f compose.app.yaml -f compose.hub.yaml up -d --wait
+sudo -E docker compose -f compose.app.yaml -f compose.hub.yaml config --images
+sudo -E docker compose -f compose.app.yaml -f compose.hub.yaml pull api
+sudo -E docker compose -f compose.app.yaml -f compose.hub.yaml up -d --wait
 ```
 
 A referência precisa ser uma API com o mesmo contrato esperado pelo frontend e pelo banco. Não use a imagem da soma nesse campo: ela é um programa que termina, e não um servidor HTTP de recados.
@@ -64,7 +64,7 @@ Para voltar ao padrão:
 
 ```bash
 unset API_IMAGE
-docker compose -f compose.app.yaml up -d --wait
+sudo -E docker compose -f compose.app.yaml up -d --wait
 ```
 
 Se também definiu API_IMAGE em `.env`, ajuste o arquivo. O padrão é `joaolsodocker/oficina-api:1.0.0`.

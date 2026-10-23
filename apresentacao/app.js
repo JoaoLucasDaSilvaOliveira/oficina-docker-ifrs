@@ -302,7 +302,7 @@
           if (!item.open || content.dataset.loaded) return;
           const r = currentResults[Number(item.dataset.commandResult)];
           content.dataset.loaded = "true";
-          content.innerHTML = `<p class="command-description">${esc(r.description)}</p>${code(r.command, "Comando", r.command)}<details class="official-help"><summary>Opções e referência de ${esc(r.command)}</summary><p>Complemento deste comando: saída original de <code>--help</code>, em inglês.</p>${code(r.help, "Ajuda original da CLI · inglês", r.command)}</details>`;
+          content.innerHTML = `<p class="command-description">${esc(r.description)}</p>${code("sudo " + r.command, "Comando", r.command)}<details class="official-help"><summary>Opções e referência de ${esc(r.command)}</summary><p>Complemento deste comando: saída original de <code>--help</code>, em inglês.</p>${code(r.help, "Ajuda original da CLI · inglês", r.command)}</details>`;
           window.OFICINA_FLAGS.annotate(content, r.command);
         }),
       );

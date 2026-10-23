@@ -3,9 +3,9 @@
 <h2 id="laboratorio">1. Laboratório</h2>
 <p>Docker Engine e plugin Compose devem estar disponíveis no Linux do laboratório. Go, Node, VS Code e PostgreSQL serão executados em containers. O navegador e o terminal pertencem à sessão gráfica do computador.</p>
 <p>Os comandos usam Bash. Se seu terminal for Fish, execute <code>bash</code> antes de copiar expressões como <code>${VAR:-padrao}</code>.</p>
-<div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>docker version
-docker compose version
-docker info
+<div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>sudo docker version
+sudo -E docker compose version
+sudo docker info
 echo &quot;$XDG_SESSION_TYPE&quot;
 echo &quot;$DISPLAY&quot;
 echo &quot;$XAUTHORITY&quot;</code></pre></div>
@@ -13,8 +13,8 @@ echo &quot;$XAUTHORITY&quot;</code></pre></div>
 <h2 id="primeiro-arquivo-uma-soma-em-go">2. Primeiro arquivo: uma soma em Go</h2>
 <p>Quando indicado, baixe <a href="../downloads/main.go">main.go</a>. Pelo gerenciador de arquivos, crie <code>HOME/oficina-docker/go-soma</code> e salve o arquivo nessa pasta como <code>main.go</code>. Confira que não foi acrescentado <code>.txt</code> ao nome.</p>
 <p>Esse programa é o mesmo da imagem <code>joaolsodocker/oficina-go:1.0.0</code>, que imprime uma soma e termina. Não precisa de banco, frontend ou módulo Go para o primeiro experimento.</p>
-<div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>docker pull joaolsodocker/oficina-go:1.0.0
-docker run --rm joaolsodocker/oficina-go:1.0.0</code></pre></div>
+<div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>sudo docker pull joaolsodocker/oficina-go:1.0.0
+sudo docker run --rm joaolsodocker/oficina-go:1.0.0</code></pre></div>
 <p>O término do processo é o comportamento esperado. Não é um servidor aguardando conexões.</p>
 <h2 id="downloads-por-etapa">3. Downloads por etapa</h2>
 <p>Os slides mostram o conceito e oferecem o comando em uma janela própria. O catálogo Materiais reúne os arquivos de consulta. Baixe somente o que o exercício precisa, sem clonar o projeto inteiro.</p>
@@ -24,5 +24,6 @@ docker run --rm joaolsodocker/oficina-go:1.0.0</code></pre></div>
 <p>A imagem da IDE abre VS Code no desktop, e não uma página web. Primeiro ela não enxerga sua pasta pessoal. Depois um bind mount de HOME para <code>/host-home</code> permite encontrar e editar o <code>main.go</code> baixado.</p>
 <p>A primeira execução já compartilha os recursos da sessão gráfica. Isso permite desenhar a janela, mas não dá automaticamente acesso aos seus projetos.</p>
 <h2 id="docker-hub">5. Docker Hub</h2>
-<p>As imagens de apoio são do instrutor, no namespace <code>joaolsodocker</code>. Quem compartilhar uma imagem própria usa sua própria conta no Hub e executa <code>docker login</code> quando indicado. A publicação do site é independente das imagens.</p>
-<p>Fontes: <a href="https://docs.docker.com/get-started/docker-overview/">Docker</a>, <a href="https://docs.docker.com/compose/">Compose</a>.</p><footer>Oficina Docker · Material de acompanhamento</footer></main><script>document.querySelectorAll('.code-bar button').forEach(button=>button.addEventListener('click',async()=>{const text=button.closest('.guide-code').querySelector('code').textContent;try{if(navigator.clipboard&&window.isSecureContext)await navigator.clipboard.writeText(text);else{const input=document.createElement('textarea');input.value=text;document.body.append(input);input.select();if(!document.execCommand('copy'))throw Error();input.remove();}button.textContent='Copiado';setTimeout(()=>button.textContent='Copiar',1800);}catch{button.textContent='Selecione o texto';}}));</script></body></html>
+<p>As imagens de apoio são do instrutor, no namespace <code>joaolsodocker</code>. Quem compartilhar uma imagem própria usa sua própria conta no Hub e executa <code>sudo docker login</code> quando indicado. A publicação do site é independente das imagens.</p>
+<p>Fontes: <a href="https://docs.docker.com/get-started/docker-overview/">Docker</a>, <a href="https://docs.docker.com/compose/">Compose</a>.</p>
+<p>Os comandos Docker usam <code>sudo</code>. No Compose, <code>sudo -E</code> preserva as variáveis da sessão necessárias à IDE e aos caminhos locais.</p><footer>Oficina Docker · Material de acompanhamento</footer></main><script>document.querySelectorAll('.code-bar button').forEach(button=>button.addEventListener('click',async()=>{const text=button.closest('.guide-code').querySelector('code').textContent;try{if(navigator.clipboard&&window.isSecureContext)await navigator.clipboard.writeText(text);else{const input=document.createElement('textarea');input.value=text;document.body.append(input);input.select();if(!document.execCommand('copy'))throw Error();input.remove();}button.textContent='Copiado';setTimeout(()=>button.textContent='Copiar',1800);}catch{button.textContent='Selecione o texto';}}));</script></body></html>

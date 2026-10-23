@@ -9,14 +9,14 @@ Os slides incluem uma captura pesquisável da ajuda do **Compose 5.6.0**, inclui
 Para consultar a versão instalada no laboratório e suas opções, use os comandos diretamente:
 
 ```bash
-docker compose version
-docker compose --help
-docker compose up --help
-docker compose run --help
-docker compose exec --help
+sudo -E docker compose version
+sudo -E docker compose --help
+sudo -E docker compose up --help
+sudo -E docker compose run --help
+sudo -E docker compose exec --help
 ```
 
-A família atual é `docker compose`; versões do plugin podem possuir opções diferentes. Não confundir o número da versão do programa com uma chave `version:` no YAML.
+A família atual é `sudo -E docker compose`; versões do plugin podem possuir opções diferentes. Não confundir o número da versão do programa com uma chave `version:` no YAML.
 
 ## 2. Opções globais de Compose
 
@@ -81,7 +81,7 @@ A captura da CLI documenta os valores exatos e os padrões. Opções globais apa
 | port | Consulta publicação de porta |
 | images / volumes / ls | Imagens usadas / volumes / projetos |
 
-TTY e interatividade são padrão em `docker compose exec`; `docker exec` precisa de `-it` para o mesmo uso interativo. `exec` não cria um container. `run` cria uma instância pontual e herda a configuração aplicável do serviço.
+TTY e interatividade são padrão em `sudo -E docker compose exec`; `sudo docker exec` precisa de `-it` para o mesmo uso interativo. `exec` não cria um container. `run` cria uma instância pontual e herda a configuração aplicável do serviço.
 
 ## 5. Encerrar e compartilhar
 

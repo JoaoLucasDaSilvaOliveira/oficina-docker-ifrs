@@ -575,6 +575,8 @@
   ]);
   const canonical = (context) => aliases.get(context) || context;
   const escapeRE = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  define("sudo", { "-E": "Preserva as variáveis do usuário para o Compose, incluindo a sessão gráfica e os caminhos locais." });
+
   const commandPattern = new RegExp(
     "(?<![\\w/.-])(" +
       [...rules.keys(), ...aliases.keys()]

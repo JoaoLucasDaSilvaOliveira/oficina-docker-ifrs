@@ -193,7 +193,7 @@ window.OFICINA_SLIDES = [
     "commands": [
       {
         "label": "Pesquisar no Docker Hub",
-        "text": "docker search alpine",
+        "text": "sudo docker search alpine",
         "context": "Terminal do computador · Bash"
       }
     ],
@@ -237,7 +237,7 @@ window.OFICINA_SLIDES = [
     "commands": [
       {
         "label": "Baixar e conferir a imagem local",
-        "text": "docker pull alpine:3.22\ndocker image ls",
+        "text": "sudo docker pull alpine:3.22\nsudo docker image ls",
         "context": "Terminal do computador · Bash"
       }
     ],
@@ -259,7 +259,7 @@ window.OFICINA_SLIDES = [
     "commands": [
       {
         "label": "Baixar e executar a imagem da soma",
-        "text": "docker pull joaolsodocker/oficina-go:1.0.0\ndocker run --name soma joaolsodocker/oficina-go:1.0.0\ndocker ps -a\ndocker logs soma",
+        "text": "sudo docker pull joaolsodocker/oficina-go:1.0.0\nsudo docker run --name soma joaolsodocker/oficina-go:1.0.0\nsudo docker ps -a\nsudo docker logs soma",
         "context": "Terminal do computador · Bash"
       }
     ],
@@ -291,7 +291,7 @@ window.OFICINA_SLIDES = [
     "commands": [
       {
         "label": "Criar o laboratório de filesystem",
-        "text": "docker run -d --name fs-lab alpine:3.22 sleep infinity\ndocker ps\ndocker ps -a",
+        "text": "sudo docker run -d --name fs-lab alpine:3.22 sleep infinity\nsudo docker ps\nsudo docker ps -a",
         "context": "Terminal do computador · Bash"
       }
     ],
@@ -326,7 +326,7 @@ window.OFICINA_SLIDES = [
     "commands": [
       {
         "label": "Comparar imagens e containers",
-        "text": "docker image ls\ndocker ps\ndocker ps -a\ndocker inspect fs-lab",
+        "text": "sudo docker image ls\nsudo docker ps\nsudo docker ps -a\nsudo docker inspect fs-lab",
         "context": "Terminal do computador · Bash"
       }
     ],
@@ -360,7 +360,7 @@ window.OFICINA_SLIDES = [
     "commands": [
       {
         "label": "Reexecutar e comparar",
-        "text": "docker start -a soma\ndocker run --rm joaolsodocker/oficina-go:1.0.0",
+        "text": "sudo docker start -a soma\nsudo docker run --rm joaolsodocker/oficina-go:1.0.0",
         "context": "Terminal do computador · Bash"
       }
     ],
@@ -403,7 +403,7 @@ window.OFICINA_SLIDES = [
     "commands": [
       {
         "label": "Abrir um shell no Alpine",
-        "text": "docker exec -it fs-lab sh",
+        "text": "sudo docker exec -it fs-lab sh",
         "context": "Terminal do computador · Bash"
       },
       {
@@ -413,7 +413,7 @@ window.OFICINA_SLIDES = [
       },
       {
         "label": "Executar cat diretamente",
-        "text": "docker exec fs-lab cat /tmp/recado.txt",
+        "text": "sudo docker exec fs-lab cat /tmp/recado.txt",
         "context": "Terminal do computador · Bash"
       }
     ],
@@ -449,12 +449,12 @@ window.OFICINA_SLIDES = [
     "commands": [
       {
         "label": "Parar, reabrir e conferir",
-        "text": "docker stop fs-lab\ndocker start fs-lab\ndocker exec fs-lab cat /tmp/recado.txt",
+        "text": "sudo docker stop fs-lab\nsudo docker start fs-lab\nsudo docker exec fs-lab cat /tmp/recado.txt",
         "context": "Terminal do computador · Bash"
       },
       {
         "label": "Remover e criar outra instância",
-        "text": "docker rm -f fs-lab\ndocker run -d --name fs-lab alpine:3.22 sleep infinity\ndocker exec fs-lab cat /tmp/recado.txt",
+        "text": "sudo docker rm -f fs-lab\nsudo docker run -d --name fs-lab alpine:3.22 sleep infinity\nsudo docker exec fs-lab cat /tmp/recado.txt",
         "context": "Terminal do computador · Bash"
       }
     ],
@@ -513,7 +513,7 @@ window.OFICINA_SLIDES = [
     "commands": [
       {
         "label": "Criar, escrever e ler um volume",
-        "text": "docker volume create dados-lab\ndocker run --rm --mount type=volume,src=dados-lab,dst=/dados \\\n  alpine:3.22 sh -c 'echo \"persisti\" > /dados/recado.txt'\ndocker run --rm --mount type=volume,src=dados-lab,dst=/dados \\\n  alpine:3.22 cat /dados/recado.txt\ndocker volume inspect dados-lab",
+        "text": "sudo docker volume create dados-lab\nsudo docker run --rm --mount type=volume,src=dados-lab,dst=/dados \\\n  alpine:3.22 sh -c 'echo \"persisti\" > /dados/recado.txt'\nsudo docker run --rm --mount type=volume,src=dados-lab,dst=/dados \\\n  alpine:3.22 cat /dados/recado.txt\nsudo docker volume inspect dados-lab",
         "context": "Terminal do computador · Bash"
       }
     ],
@@ -549,7 +549,7 @@ window.OFICINA_SLIDES = [
     "commands": [
       {
         "label": "Inspecionar o laboratório",
-        "text": "docker inspect fs-lab\ndocker logs --tail 50 fs-lab\ndocker top fs-lab\ndocker stats --no-stream fs-lab\ndocker diff fs-lab",
+        "text": "sudo docker inspect fs-lab\nsudo docker logs --tail 50 fs-lab\nsudo docker top fs-lab\nsudo docker stats --no-stream fs-lab\nsudo docker diff fs-lab",
         "context": "Terminal do computador · Bash"
       }
     ],
@@ -611,12 +611,12 @@ window.OFICINA_SLIDES = [
     "commands": [
       {
         "label": "Baixar a imagem do editor",
-        "text": "docker pull joaolsodocker/oficina-ide:1.0.0",
+        "text": "sudo docker pull joaolsodocker/oficina-ide:1.0.0",
         "context": "Terminal do computador · Bash"
       },
       {
         "label": "Abrir sem montar a pasta pessoal",
-        "text": "docker run -d --name ide \\\n  --user \"$(id -u):$(id -g)\" \\\n  --hostname \"$(hostname)\" \\\n  -e DISPLAY -e XAUTHORITY=/tmp/oficina.xauth \\\n  --mount type=bind,src=/tmp/.X11-unix,dst=/tmp/.X11-unix,readonly \\\n  --mount \"type=bind,src=${XAUTHORITY:-$HOME/.Xauthority},dst=/tmp/oficina.xauth,readonly\" \\\n  --tmpfs \"/tmp/runtime-aluno:uid=$(id -u),gid=$(id -g),mode=0700\" \\\n  --shm-size=256m \\\n  joaolsodocker/oficina-ide:1.0.0",
+        "text": "sudo docker run -d --name ide \\\n  --user \"$(id -u):$(id -g)\" \\\n  --hostname \"$(hostname)\" \\\n  -e DISPLAY -e XAUTHORITY=/tmp/oficina.xauth \\\n  --mount type=bind,src=/tmp/.X11-unix,dst=/tmp/.X11-unix,readonly \\\n  --mount \"type=bind,src=${XAUTHORITY:-$HOME/.Xauthority},dst=/tmp/oficina.xauth,readonly\" \\\n  --tmpfs \"/tmp/runtime-aluno:uid=$(id -u),gid=$(id -g),mode=0700\" \\\n  --shm-size=256m \\\n  joaolsodocker/oficina-ide:1.0.0",
         "context": "Terminal do computador · Bash"
       }
     ],
@@ -646,7 +646,7 @@ window.OFICINA_SLIDES = [
     "commands": [
       {
         "label": "Conferir a instância do editor",
-        "text": "docker ps\ndocker top ide\ndocker inspect ide\ndocker ps -a\ndocker start ide",
+        "text": "sudo docker ps\nsudo docker top ide\nsudo docker inspect ide\nsudo docker ps -a\nsudo docker start ide",
         "context": "Terminal do computador · Bash"
       }
     ],
@@ -675,7 +675,7 @@ window.OFICINA_SLIDES = [
     "commands": [
       {
         "label": "Recriar a IDE com acesso à HOME",
-        "text": "docker rm -f ide\ndocker run -d --name ide \\\n  --user \"$(id -u):$(id -g)\" \\\n  --hostname \"$(hostname)\" \\\n  -e DISPLAY -e XAUTHORITY=/tmp/oficina.xauth \\\n  --mount type=bind,src=/tmp/.X11-unix,dst=/tmp/.X11-unix,readonly \\\n  --mount \"type=bind,src=${XAUTHORITY:-$HOME/.Xauthority},dst=/tmp/oficina.xauth,readonly\" \\\n  --tmpfs \"/tmp/runtime-aluno:uid=$(id -u),gid=$(id -g),mode=0700\" \\\n  --mount \"type=bind,src=$HOME,dst=/host-home\" \\\n  --workdir /host-home \\\n  --shm-size=256m \\\n  joaolsodocker/oficina-ide:1.0.0",
+        "text": "sudo docker rm -f ide\nsudo docker run -d --name ide \\\n  --user \"$(id -u):$(id -g)\" \\\n  --hostname \"$(hostname)\" \\\n  -e DISPLAY -e XAUTHORITY=/tmp/oficina.xauth \\\n  --mount type=bind,src=/tmp/.X11-unix,dst=/tmp/.X11-unix,readonly \\\n  --mount \"type=bind,src=${XAUTHORITY:-$HOME/.Xauthority},dst=/tmp/oficina.xauth,readonly\" \\\n  --tmpfs \"/tmp/runtime-aluno:uid=$(id -u),gid=$(id -g),mode=0700\" \\\n  --mount \"type=bind,src=$HOME,dst=/host-home\" \\\n  --workdir /host-home \\\n  --shm-size=256m \\\n  joaolsodocker/oficina-ide:1.0.0",
         "context": "Terminal do computador · Bash"
       }
     ],
@@ -712,7 +712,7 @@ window.OFICINA_SLIDES = [
     "commands": [
       {
         "label": "Executar o código editado com Go no Docker",
-        "text": "docker run --rm \\\n  --user \"$(id -u):$(id -g)\" \\\n  --mount \"type=bind,src=$HOME/oficina-docker/go-soma,dst=/src,readonly\" \\\n  -w /src -e GOCACHE=/tmp/go-cache \\\n  golang:1.27.3-alpine go run main.go",
+        "text": "sudo docker run --rm \\\n  --user \"$(id -u):$(id -g)\" \\\n  --mount \"type=bind,src=$HOME/oficina-docker/go-soma,dst=/src,readonly\" \\\n  -w /src -e GOCACHE=/tmp/go-cache \\\n  golang:1.27.3-alpine go run main.go",
         "context": "Terminal do computador · Bash"
       }
     ],
@@ -763,7 +763,7 @@ window.OFICINA_SLIDES = [
     "commands": [
       {
         "label": "Executar o Vite sem Node instalado no computador",
-        "text": "docker run --rm -it --name vue-dev \\\n  -p 127.0.0.1:5174:5173 \\\n  --mount \"type=bind,src=$HOME/oficina-docker/vue-vite,dst=/app\" \\\n  --mount type=volume,dst=/app/node_modules \\\n  -w /app \\\n  node:24-alpine sh -c 'npm ci && npm run dev -- --host 0.0.0.0'",
+        "text": "sudo docker run --rm -it --name vue-dev \\\n  -p 127.0.0.1:5174:5173 \\\n  --mount \"type=bind,src=$HOME/oficina-docker/vue-vite,dst=/app\" \\\n  --mount type=volume,dst=/app/node_modules \\\n  -w /app \\\n  node:24-alpine sh -c 'npm ci && npm run dev -- --host 0.0.0.0'",
         "context": "Terminal do computador · Bash"
       }
     ],
@@ -797,7 +797,7 @@ window.OFICINA_SLIDES = [
     "commands": [
       {
         "label": "Executar a imagem pronta do frontend",
-        "text": "docker pull joaolsodocker/oficina-vue:1.0.0\ndocker run -d --name vue-web \\\n  -p 127.0.0.1:5174:80 \\\n  joaolsodocker/oficina-vue:1.0.0\ndocker logs --tail 20 vue-web",
+        "text": "sudo docker pull joaolsodocker/oficina-vue:1.0.0\nsudo docker run -d --name vue-web \\\n  -p 127.0.0.1:5174:80 \\\n  joaolsodocker/oficina-vue:1.0.0\nsudo docker logs --tail 20 vue-web",
         "context": "Encerre vue-dev com Ctrl+C no terminal anterior para liberar a porta 5174. Depois, execute no terminal do computador."
       }
     ],
@@ -829,7 +829,7 @@ window.OFICINA_SLIDES = [
     "commands": [
       {
         "label": "Observar a publicação de portas",
-        "text": "docker ps\ndocker port vue-web\ndocker exec vue-web nginx -v",
+        "text": "sudo docker ps\nsudo docker port vue-web\nsudo docker exec vue-web nginx -v",
         "context": "Terminal do computador · Bash"
       }
     ],
@@ -903,12 +903,12 @@ window.OFICINA_SLIDES = [
     "commands": [
       {
         "label": "Construir usando caminhos completos",
-        "text": "docker build -t minha-soma-simples:1.0.0 \\\n  -f \"$HOME/oficina-docker/go-soma/Dockerfile.simples\" \\\n  \"$HOME/oficina-docker/go-soma\"",
+        "text": "sudo docker build -t minha-soma-simples:1.0.0 \\\n  -f \"$HOME/oficina-docker/go-soma/Dockerfile.simples\" \\\n  \"$HOME/oficina-docker/go-soma\"",
         "context": "Terminal do computador · Bash"
       },
       {
         "label": "A mesma escolha, usando a pasta atual",
-        "text": "cd \"$HOME/oficina-docker/go-soma\"\ndocker build -t minha-soma-simples:1.0.0 -f Dockerfile.simples .",
+        "text": "cd \"$HOME/oficina-docker/go-soma\"\nsudo docker build -t minha-soma-simples:1.0.0 -f Dockerfile.simples .",
         "context": "Terminal do computador · Bash"
       }
     ],
@@ -1013,12 +1013,12 @@ window.OFICINA_SLIDES = [
     "commands": [
       {
         "label": "Executar o comando padrão",
-        "text": "docker run --rm minha-soma-simples:1.0.0",
+        "text": "sudo docker run --rm minha-soma-simples:1.0.0",
         "context": "Terminal do computador · Bash"
       },
       {
         "label": "Substituir o CMD por um shell",
-        "text": "docker run --rm -it minha-soma-simples:1.0.0 sh",
+        "text": "sudo docker run --rm -it minha-soma-simples:1.0.0 sh",
         "context": "Terminal do computador · Bash"
       },
       {
@@ -1098,7 +1098,7 @@ window.OFICINA_SLIDES = [
       },
       {
         "label": "Construir só o estágio de compilação para explorar",
-        "text": "docker build --target build -t minha-soma-build \\\n  \"$HOME/oficina-docker/go-soma\"\ndocker run --rm -it --entrypoint sh minha-soma-build",
+        "text": "sudo docker build --target build -t minha-soma-build \\\n  \"$HOME/oficina-docker/go-soma\"\nsudo docker run --rm -it --entrypoint sh minha-soma-build",
         "context": "Terminal do computador · Bash"
       }
     ],
@@ -1138,7 +1138,7 @@ window.OFICINA_SLIDES = [
       },
       {
         "label": "Construir e executar sua versão",
-        "text": "docker build -t meu-vue:1.0.0 \"$HOME/oficina-docker/vue-vite\"\ndocker run -d --name meu-vue \\\n  -p 127.0.0.1:5175:80 \\\n  meu-vue:1.0.0",
+        "text": "sudo docker build -t meu-vue:1.0.0 \"$HOME/oficina-docker/vue-vite\"\nsudo docker run -d --name meu-vue \\\n  -p 127.0.0.1:5175:80 \\\n  meu-vue:1.0.0",
         "context": "Terminal do computador · Bash"
       }
     ],
@@ -1179,7 +1179,7 @@ window.OFICINA_SLIDES = [
       },
       {
         "label": "Comparar um build repetido",
-        "text": "docker build -t meu-vue:1.0.0 \"$HOME/oficina-docker/vue-vite\"\ndocker image history meu-vue:1.0.0",
+        "text": "sudo docker build -t meu-vue:1.0.0 \"$HOME/oficina-docker/vue-vite\"\nsudo docker image history meu-vue:1.0.0",
         "context": "Terminal do computador · Bash"
       }
     ],
@@ -1215,7 +1215,7 @@ window.OFICINA_SLIDES = [
     "commands": [
       {
         "label": "Abrir a receita completa na IDE",
-        "text": "docker start ide\ndocker exec ide code --no-sandbox --reuse-window /opt/oficina/receitas/ide.Dockerfile",
+        "text": "sudo docker start ide\nsudo docker exec ide code --no-sandbox --reuse-window /opt/oficina/receitas/ide.Dockerfile",
         "context": "Terminal do computador · Bash"
       }
     ],
@@ -1255,7 +1255,7 @@ window.OFICINA_SLIDES = [
     "commands": [
       {
         "label": "Construir e executar sua imagem",
-        "text": "docker build -t minha-soma:1.0.0 \"$HOME/oficina-docker/go-soma\"\ndocker run --rm minha-soma:1.0.0\ndocker image ls\ndocker image inspect minha-soma:1.0.0",
+        "text": "sudo docker build -t minha-soma:1.0.0 \"$HOME/oficina-docker/go-soma\"\nsudo docker run --rm minha-soma:1.0.0\nsudo docker image ls\nsudo docker image inspect minha-soma:1.0.0",
         "context": "Terminal do computador · Bash"
       }
     ],
@@ -1301,7 +1301,7 @@ window.OFICINA_SLIDES = [
     "commands": [
       {
         "label": "Conferir o arquivo baixado",
-        "text": "cd \"$HOME/oficina-docker\"\ndocker compose -f compose.app.yaml config",
+        "text": "cd \"$HOME/oficina-docker\"\nsudo -E docker compose -f compose.app.yaml config",
         "context": "Terminal do computador · Bash"
       }
     ],
@@ -1336,7 +1336,7 @@ window.OFICINA_SLIDES = [
     "commands": [
       {
         "label": "Ver a configuração completa",
-        "text": "cd \"$HOME/oficina-docker\"\ndocker compose -f compose.app.yaml config",
+        "text": "cd \"$HOME/oficina-docker\"\nsudo -E docker compose -f compose.app.yaml config",
         "context": "Terminal do computador · Bash"
       },
       {
@@ -1359,12 +1359,12 @@ window.OFICINA_SLIDES = [
     "commands": [
       {
         "label": "Baixar, iniciar e conferir",
-        "text": "cd \"$HOME/oficina-docker\"\ndocker compose -f compose.app.yaml pull\ndocker compose -f compose.app.yaml up -d --wait\ndocker compose -f compose.app.yaml ps",
+        "text": "cd \"$HOME/oficina-docker\"\nsudo -E docker compose -f compose.app.yaml pull\nsudo -E docker compose -f compose.app.yaml up -d --wait\nsudo -E docker compose -f compose.app.yaml ps",
         "context": "Terminal do computador · Bash"
       },
       {
         "label": "Acompanhar a API",
-        "text": "docker compose -f compose.app.yaml logs -f --tail 50 api",
+        "text": "sudo -E docker compose -f compose.app.yaml logs -f --tail 50 api",
         "context": "Terminal do computador · Bash"
       }
     ],
@@ -1399,7 +1399,7 @@ window.OFICINA_SLIDES = [
     "commands": [
       {
         "label": "Comparar a visão geral e a do projeto",
-        "text": "docker ps\ndocker ps -a\ndocker compose -f \"$HOME/oficina-docker/compose.app.yaml\" ps\ndocker compose -f \"$HOME/oficina-docker/compose.app.yaml\" ps -a",
+        "text": "sudo docker ps\nsudo docker ps -a\nsudo -E docker compose -f \"$HOME/oficina-docker/compose.app.yaml\" ps\nsudo -E docker compose -f \"$HOME/oficina-docker/compose.app.yaml\" ps -a",
         "context": "Terminal do computador · Bash"
       }
     ],
@@ -1417,7 +1417,7 @@ window.OFICINA_SLIDES = [
     "commands": [
       {
         "label": "Ver a rede e a configuração",
-        "text": "docker network ls\ndocker network inspect oficina-mural_default\ndocker compose -f \"$HOME/oficina-docker/compose.app.yaml\" config",
+        "text": "sudo docker network ls\nsudo docker network inspect oficina-mural_default\nsudo -E docker compose -f \"$HOME/oficina-docker/compose.app.yaml\" config",
         "context": "Terminal do computador · Bash"
       }
     ],
@@ -1453,7 +1453,7 @@ window.OFICINA_SLIDES = [
     "commands": [
       {
         "label": "Ver a porta publicada",
-        "text": "docker compose -f \"$HOME/oficina-docker/compose.app.yaml\" port web 8080",
+        "text": "sudo -E docker compose -f \"$HOME/oficina-docker/compose.app.yaml\" port web 8080",
         "context": "Terminal do computador · Bash"
       },
       {
@@ -1499,7 +1499,7 @@ window.OFICINA_SLIDES = [
       },
       {
         "label": "Observar saúde e logs",
-        "text": "docker compose -f \"$HOME/oficina-docker/compose.app.yaml\" ps\ndocker compose -f \"$HOME/oficina-docker/compose.app.yaml\" logs --tail 30 db api",
+        "text": "sudo -E docker compose -f \"$HOME/oficina-docker/compose.app.yaml\" ps\nsudo -E docker compose -f \"$HOME/oficina-docker/compose.app.yaml\" logs --tail 30 db api",
         "context": "Terminal do computador · Bash"
       }
     ],
@@ -1531,7 +1531,7 @@ window.OFICINA_SLIDES = [
     "commands": [
       {
         "label": "Recriar sem remover o volume",
-        "text": "cd \"$HOME/oficina-docker\"\ndocker compose -f compose.app.yaml down\ndocker compose -f compose.app.yaml up -d --wait\ndocker volume ls",
+        "text": "cd \"$HOME/oficina-docker\"\nsudo -E docker compose -f compose.app.yaml down\nsudo -E docker compose -f compose.app.yaml up -d --wait\nsudo docker volume ls",
         "context": "Terminal do computador · Bash"
       }
     ],
@@ -1567,7 +1567,7 @@ window.OFICINA_SLIDES = [
     "commands": [
       {
         "label": "Interromper uma dependência e recuperar",
-        "text": "cd \"$HOME/oficina-docker\"\ndocker compose -f compose.app.yaml stop db\ndocker compose -f compose.app.yaml logs --tail 30 api\ndocker compose -f compose.app.yaml start db\ndocker compose -f compose.app.yaml ps",
+        "text": "cd \"$HOME/oficina-docker\"\nsudo -E docker compose -f compose.app.yaml stop db\nsudo -E docker compose -f compose.app.yaml logs --tail 30 api\nsudo -E docker compose -f compose.app.yaml start db\nsudo -E docker compose -f compose.app.yaml ps",
         "context": "Terminal do computador · Bash"
       }
     ],
@@ -1604,7 +1604,7 @@ window.OFICINA_SLIDES = [
     "commands": [
       {
         "label": "Publicar sua imagem no seu namespace",
-        "text": "docker login\ndocker tag minha-soma:1.0.0 SEUUSUARIO/oficina-go:1.0.0\ndocker push SEUUSUARIO/oficina-go:1.0.0",
+        "text": "sudo docker login\nsudo docker tag minha-soma:1.0.0 SEUUSUARIO/oficina-go:1.0.0\nsudo docker push SEUUSUARIO/oficina-go:1.0.0",
         "context": "Terminal do computador · Bash"
       }
     ],
@@ -1639,7 +1639,7 @@ window.OFICINA_SLIDES = [
     "commands": [
       {
         "label": "Baixar e executar a imagem do colega",
-        "text": "docker pull COLEGA/oficina-go:1.0.0\ndocker run --rm COLEGA/oficina-go:1.0.0",
+        "text": "sudo docker pull COLEGA/oficina-go:1.0.0\nsudo docker run --rm COLEGA/oficina-go:1.0.0",
         "context": "Terminal do computador · Bash"
       }
     ],
@@ -1673,7 +1673,7 @@ window.OFICINA_SLIDES = [
     "commands": [
       {
         "label": "Conferir a imagem pronta",
-        "text": "docker image inspect minha-soma:1.0.0\ndocker image history minha-soma:1.0.0",
+        "text": "sudo docker image inspect minha-soma:1.0.0\nsudo docker image history minha-soma:1.0.0",
         "context": "Terminal do computador · Bash"
       }
     ],
@@ -1739,7 +1739,7 @@ window.OFICINA_SLIDES = [
     "commands": [
       {
         "label": "Encerrar somente os exercícios da oficina",
-        "text": "docker compose -f \"$HOME/oficina-docker/compose.app.yaml\" down\ndocker rm -f fs-lab ide vue-web meu-vue\ndocker rm soma",
+        "text": "sudo -E docker compose -f \"$HOME/oficina-docker/compose.app.yaml\" down\nsudo docker rm -f fs-lab ide vue-web meu-vue\nsudo docker rm soma",
         "context": "Terminal do computador · Bash"
       }
     ],

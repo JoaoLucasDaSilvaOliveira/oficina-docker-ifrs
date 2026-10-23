@@ -5,19 +5,19 @@
 <p>Uma tag local curta não é automaticamente o repositório da sua conta. Para publicar, marque a imagem no seu namespace.</p>
 <h2 id="publicar-o-programa-go">2. Publicar o programa Go</h2>
 <p>Depois de construir sua imagem <code>minha-soma:1.0.0</code>:</p>
-<div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>docker login
-docker tag minha-soma:1.0.0 SEUUSUARIO/oficina-go:1.0.0
-docker push SEUUSUARIO/oficina-go:1.0.0</code></pre></div>
+<div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>sudo docker login
+sudo docker tag minha-soma:1.0.0 SEUUSUARIO/oficina-go:1.0.0
+sudo docker push SEUUSUARIO/oficina-go:1.0.0</code></pre></div>
 <p>Substitua SEUUSUARIO por sua conta ou organização no Docker Hub. A pessoa executa login e push explicitamente; nenhum script de materiais publica imagens ou compartilha credenciais.</p>
 <h2 id="executar-a-imagem-do-colega">3. Executar a imagem do colega</h2>
-<div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>docker pull COLEGA/oficina-go:1.0.0
-docker run --rm COLEGA/oficina-go:1.0.0</code></pre></div>
+<div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>sudo docker pull COLEGA/oficina-go:1.0.0
+sudo docker run --rm COLEGA/oficina-go:1.0.0</code></pre></div>
 <p>Troque COLEGA pelo namespace escolhido. A mensagem impressa confirma a versão do programa recebido. O colega não precisa baixar seu fonte, Dockerfile ou compilador.</p>
 <p>O mesmo vale para o Vue:</p>
-<div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>docker tag meu-vue:1.0.0 SEUUSUARIO/oficina-vue:1.0.0
-docker push SEUUSUARIO/oficina-vue:1.0.0</code></pre></div>
+<div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>sudo docker tag meu-vue:1.0.0 SEUUSUARIO/oficina-vue:1.0.0
+sudo docker push SEUUSUARIO/oficina-vue:1.0.0</code></pre></div>
 <p>Em outra máquina, ou depois de o colega publicar:</p>
-<div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>docker run -d --name front-colega \
+<div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>sudo docker run -d --name front-colega \
   -p 127.0.0.1:8083:80 \
   COLEGA/oficina-vue:1.0.0</code></pre></div>
 <p>Abra <code>http://localhost:8083</code>. Se a imagem ainda não estiver no daemon local, docker run tenta baixá-la. O nome da tag deve ser compatível com a que foi publicada.</p>
@@ -25,13 +25,13 @@ docker push SEUUSUARIO/oficina-vue:1.0.0</code></pre></div>
 <p>No aprofundamento do mural, a configuração permite selecionar outra imagem compatível da API. Isso não exige mostrar seu código ao restante da turma. Baixe os YAMLs do <a href="../downloads/compose-mural.zip">Compose do mural</a>, extraídos em HOME/oficina-docker:</p>
 <div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>cd &quot;$HOME/oficina-docker&quot;
 export API_IMAGE=COLEGA/oficina-api:1.0.0
-docker compose -f compose.app.yaml -f compose.hub.yaml config --images
-docker compose -f compose.app.yaml -f compose.hub.yaml pull api
-docker compose -f compose.app.yaml -f compose.hub.yaml up -d --wait</code></pre></div>
+sudo -E docker compose -f compose.app.yaml -f compose.hub.yaml config --images
+sudo -E docker compose -f compose.app.yaml -f compose.hub.yaml pull api
+sudo -E docker compose -f compose.app.yaml -f compose.hub.yaml up -d --wait</code></pre></div>
 <p>A referência precisa ser uma API com o mesmo contrato esperado pelo frontend e pelo banco. Não use a imagem da soma nesse campo: ela é um programa que termina, e não um servidor HTTP de recados.</p>
 <p>Para voltar ao padrão:</p>
 <div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>unset API_IMAGE
-docker compose -f compose.app.yaml up -d --wait</code></pre></div>
+sudo -E docker compose -f compose.app.yaml up -d --wait</code></pre></div>
 <p>Se também definiu API_IMAGE em <code>.env</code>, ajuste o arquivo. O padrão é <code>joaolsodocker/oficina-api:1.0.0</code>.</p>
 <h2 id="o-que-viaja">5. O que viaja</h2>
 <p>Push envia os arquivos e a configuração da imagem selecionada. Não envia volumes do banco, bind mounts, variáveis do shell, YAMLs ou outras imagens. No multi-stage, fontes e compiladores não entram no estágio final se você não os copiar.</p>

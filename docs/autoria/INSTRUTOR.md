@@ -33,26 +33,26 @@ Esta preparação não publica o site: o instrutor decide quando executar o work
 ## 3. Construir as imagens de referência
 
 ```bash
-docker build -t joaolsodocker/oficina-go:1.0.0 exemplos/go-soma
-docker build -t joaolsodocker/oficina-vue:1.0.0 exemplos/vue-vite
-docker build -t joaolsodocker/oficina-ide:1.0.0 exemplos/ide
-docker build -t joaolsodocker/oficina-api:1.0.0 exemplos/mural/api
-docker build -t joaolsodocker/oficina-web:1.0.0 exemplos/mural/frontend
+sudo docker build -t joaolsodocker/oficina-go:1.0.0 exemplos/go-soma
+sudo docker build -t joaolsodocker/oficina-vue:1.0.0 exemplos/vue-vite
+sudo docker build -t joaolsodocker/oficina-ide:1.0.0 exemplos/ide
+sudo docker build -t joaolsodocker/oficina-api:1.0.0 exemplos/mural/api
+sudo docker build -t joaolsodocker/oficina-web:1.0.0 exemplos/mural/frontend
 ```
 
-A IDE usa somente a pasta `exemplos/ide` como contexto. Dentro dessa pasta, o comando equivalente é `docker build -t joaolsodocker/oficina-ide:1.0.0 .`. A imagem inclui sua própria receita para leitura durante a oficina, sem depender das fontes do mural ou do Dockerfile dos slides. A turma escolhe o UID/GID efetivo com `--user`, sem reconstruir uma imagem por pessoa. O runtime gráfico fica em tmpfs com UID/GID e modo 0700. O editor abre `/workspace` na primeira experiência; com HOME montado, abre `/host-home`.
+A IDE usa somente a pasta `exemplos/ide` como contexto. Dentro dessa pasta, o comando equivalente é `sudo docker build -t joaolsodocker/oficina-ide:1.0.0 .`. A imagem inclui sua própria receita para leitura durante a oficina, sem depender das fontes do mural ou do Dockerfile dos slides. A turma escolhe o UID/GID efetivo com `--user`, sem reconstruir uma imagem por pessoa. O runtime gráfico fica em tmpfs com UID/GID e modo 0700. O editor abre `/workspace` na primeira experiência; com HOME montado, abre `/host-home`.
 
 O programa da imagem Go deve ser o mesmo do `main.go` oferecido no site. O Vue é o template original; a diferença entre os dois acessos está na forma de executar, não no conteúdo da tela. O mural fica reservado ao capítulo de Compose, usando imagens prontas.
 
 ## 4. Publicar manualmente as imagens
 
 ```bash
-docker login
-docker push joaolsodocker/oficina-go:1.0.0
-docker push joaolsodocker/oficina-vue:1.0.0
-docker push joaolsodocker/oficina-ide:1.0.0
-docker push joaolsodocker/oficina-api:1.0.0
-docker push joaolsodocker/oficina-web:1.0.0
+sudo docker login
+sudo docker push joaolsodocker/oficina-go:1.0.0
+sudo docker push joaolsodocker/oficina-vue:1.0.0
+sudo docker push joaolsodocker/oficina-ide:1.0.0
+sudo docker push joaolsodocker/oficina-api:1.0.0
+sudo docker push joaolsodocker/oficina-web:1.0.0
 ```
 
 O instrutor executa login e push antes da oficina. Confira acesso público, arquitetura compatível e pull a partir de outra máquina. Podem ser pré-carregadas as imagens Go, Node, IDE, Vue, API, web e PostgreSQL para reduzir a dependência da rede durante a aula. Não é necessário publicar uma imagem dos slides.
@@ -62,8 +62,8 @@ O instrutor executa login e push antes da oficina. Confira acesso público, arqu
 O Dockerfile da raiz prepara o mesmo site estático e serve em Nginx na porta interna 8080. Ele existe para desenvolvimento local e não é um passo para os alunos:
 
 ```bash
-docker build -t joaolsodocker/oficina-slides:1.0.0 .
-docker compose -f compose.yaml up -d --pull never --wait
+sudo docker build -t joaolsodocker/oficina-slides:1.0.0 .
+sudo -E docker compose -f compose.yaml up -d --pull never --wait
 ```
 
 O `compose.yaml` da raiz foi preservado para esse preview. Ele não integra os downloads dos participantes. O endereço local é `http://localhost:8080/apresentacao/`.

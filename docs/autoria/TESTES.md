@@ -75,10 +75,10 @@ A sessão real do Linux Mint no laboratório ainda deve ser conferida no local. 
 Use os comandos completos dos guias, sem scripts auxiliares. Para conferir a aplicação:
 
 ```bash
-docker compose -f compose.app.yaml config --quiet
-docker compose -f compose.app.yaml up -d --build --wait
-docker compose -f compose.app.yaml exec -T api /api -healthcheck
-docker compose -f compose.app.yaml exec -T web wget -q -O - http://127.0.0.1:8080/api/info
+sudo -E docker compose -f compose.app.yaml config --quiet
+sudo -E docker compose -f compose.app.yaml up -d --build --wait
+sudo -E docker compose -f compose.app.yaml exec -T api /api -healthcheck
+sudo -E docker compose -f compose.app.yaml exec -T web wget -q -O - http://127.0.0.1:8080/api/info
 ```
 
 Esses comandos preservam os dados do banco. Para a IDE, siga docs/02-ide-desktop.md, começando por docker build e docker run. O processo principal chama code --wait; não existe wrapper de abertura.

@@ -70,4 +70,4 @@ A ferramenta de autoria não faz parte dos comandos da aula. Ela copia somente o
 - `ferramentas/` e `testes/`: geração e validação do material.
 - `infra/`: configuração do servidor do preview.
 
-O `Dockerfile` e o `compose.yaml` da raiz servem apenas ao preview dos slides. Para iniciar o mural a partir deste repositório, use `docker compose -f compose/compose.app.yaml up -d --wait`. Os comandos dos alunos continuam usando os YAMLs extraídos dos downloads.
+O `Dockerfile` e o `compose.yaml` da raiz servem apenas ao preview dos slides. Para iniciar o mural a partir deste repositório, use `sudo -E docker compose -f compose/compose.app.yaml up -d --wait`. Os comandos dos alunos continuam usando os YAMLs extraídos dos downloads.

@@ -8,11 +8,11 @@ Baixe [Compose do mural](../downloads/compose-mural.zip) e extraia em `HOME/ofic
 
 ```bash
 cd "$HOME/oficina-docker"
-docker compose -f compose.app.yaml config
-docker compose -f compose.app.yaml pull
-docker compose -f compose.app.yaml up -d --wait
-docker compose -f compose.app.yaml ps
-docker compose -f compose.app.yaml logs -f --tail 50
+sudo -E docker compose -f compose.app.yaml config
+sudo -E docker compose -f compose.app.yaml pull
+sudo -E docker compose -f compose.app.yaml up -d --wait
+sudo -E docker compose -f compose.app.yaml ps
+sudo -E docker compose -f compose.app.yaml logs -f --tail 50
 ```
 
 Abra `http://localhost:8088`. `config` mostra o modelo resolvido, sem iniciar os serviços. O `-f` antes do subcomando seleciona o arquivo; o `-f` de logs acompanha novas mensagens. Ctrl+C sai do acompanhamento sem parar os containers.
@@ -25,16 +25,16 @@ Abra `http://localhost:8088`. `config` mostra o modelo resolvido, sem iniciar os
 | oficina-mural-api-1 | Container criado para uma instância da API |
 | oficina-mural_default | Rede padrão criada para o projeto |
 
-`docker ps` vê todos os containers em execução do daemon selecionado. `docker compose -f compose.app.yaml ps` filtra o projeto selecionado. Ambos aceitam `-a` para incluir parados. Compose usa labels de projeto e serviço para identificar seus recursos.
+`sudo docker ps` vê todos os containers em execução do daemon selecionado. `sudo -E docker compose -f compose.app.yaml ps` filtra o projeto selecionado. Ambos aceitam `-a` para incluir parados. Compose usa labels de projeto e serviço para identificar seus recursos.
 
 ## 2. Ciclo de vida
 
 ```bash
-docker compose -f compose.app.yaml stop
-docker compose -f compose.app.yaml ps -a
-docker compose -f compose.app.yaml start
-docker compose -f compose.app.yaml down
-docker compose -f compose.app.yaml up -d --wait
+sudo -E docker compose -f compose.app.yaml stop
+sudo -E docker compose -f compose.app.yaml ps -a
+sudo -E docker compose -f compose.app.yaml start
+sudo -E docker compose -f compose.app.yaml down
+sudo -E docker compose -f compose.app.yaml up -d --wait
 ```
 
 Stop/start preserva as instâncias. Down/up remove e recria os containers e a rede. Volumes nomeados permanecem por padrão. `restart` não substitui `up` ao alterar o YAML. `down -v` remove os volumes abrangidos e descarta os recados, por isso deve ser usado apenas quando essa limpeza for intencional.
@@ -50,12 +50,12 @@ A rede entre serviços usa os nomes `api` e `db`. A aplicação no navegador usa
 Antes de explorar o volume PostgreSQL, esta experiência menor permite observar persistência:
 
 ```bash
-docker volume create dados-lab
-docker run --rm --mount type=volume,src=dados-lab,dst=/dados \
+sudo docker volume create dados-lab
+sudo docker run --rm --mount type=volume,src=dados-lab,dst=/dados \
   alpine:3.22 sh -c 'printf "persisti\n" > /dados/recado.txt'
-docker run --rm --mount type=volume,src=dados-lab,dst=/dados \
+sudo docker run --rm --mount type=volume,src=dados-lab,dst=/dados \
   alpine:3.22 cat /dados/recado.txt
-docker volume inspect dados-lab
+sudo docker volume inspect dados-lab
 ```
 
 O primeiro container é removido por `--rm`, mas o volume nomeado continua e pode ser montado pelo segundo. O PostgreSQL usa esse princípio para preservar os recados do mural.
@@ -69,11 +69,11 @@ Baixe [Compose da IDE](../downloads/compose-ide.zip) e extraia em `HOME/oficina-
 Feche a janela da IDE usada no exercício anterior. A primeira linha remove apenas esse container de demonstração.
 
 ```bash
-docker rm -f ide
+sudo docker rm -f ide
 cd "$HOME/oficina-docker"
 LOCAL_UID="$(id -u)" LOCAL_GID="$(id -g)" \
 HOST_HOSTNAME="$(hostname)" XAUTHORITY="${XAUTHORITY:-$HOME/.Xauthority}" \
-docker compose -f compose.ide.yaml up -d
+sudo -E docker compose -f compose.ide.yaml up -d
 ```
 
 O comando identifica seu usuário e sua sessão gráfica automaticamente. Usa a autorização indicada pela sessão; se essa variável estiver vazia, usa `$HOME/.Xauthority`, o caminho padrão da sessão X11 do Mint. Nenhuma permissão global de acesso ao display é alterada.
@@ -84,12 +84,12 @@ O comando identifica seu usuário e sua sessão gráfica automaticamente. Usa a 
 cd "$HOME/oficina-docker"
 LOCAL_UID="$(id -u)" LOCAL_GID="$(id -g)" \
 HOST_HOSTNAME="$(hostname)" XAUTHORITY="${XAUTHORITY:-$HOME/.Xauthority}" \
-docker compose -f compose.ide.yaml -f compose.ide.bind.yaml up -d --force-recreate
+sudo -E docker compose -f compose.ide.yaml -f compose.ide.bind.yaml up -d --force-recreate
 ```
 
 Agora a pasta pessoal aparece em `/host-home`. As alterações feitas ali são nos arquivos reais do computador. O comando fornece novamente todos os valores necessários; não depende de um `export` executado antes.
 
-Para encerrar, execute `docker compose -f compose.ide.yaml down` na pasta dos arquivos. A alternativa Wayland também possui um comando completo no README do ZIP.
+Para encerrar, execute `sudo -E docker compose -f compose.ide.yaml down` na pasta dos arquivos. A alternativa Wayland também possui um comando completo no README do ZIP.
 
 ## 6. Montagem e permissões
 

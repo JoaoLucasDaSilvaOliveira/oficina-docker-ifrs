@@ -1,6 +1,6 @@
 # Imagens, contexto e Dockerfile
 
-Uma imagem reúne arquivos e configuração de execução. Dockerfile é a receita; `docker build` executa essa receita; `docker push` publica o resultado já construído. A pessoa que recebe a imagem não precisa reconstruir o código.
+Uma imagem reúne arquivos e configuração de execução. Dockerfile é a receita; `sudo docker build` executa essa receita; `sudo docker push` publica o resultado já construído. A pessoa que recebe a imagem não precisa reconstruir o código.
 
 ## 1. Obter as receitas do Go
 
@@ -13,10 +13,10 @@ A aplicação é só uma soma. Não tem servidor, porta, módulo externo ou banc
 ## 2. Construir a imagem simples
 
 ```bash
-docker build -t minha-soma-simples:1.0.0 \
+sudo docker build -t minha-soma-simples:1.0.0 \
   -f "$HOME/oficina-docker/go-soma/Dockerfile.simples" \
   "$HOME/oficina-docker/go-soma"
-docker run --rm minha-soma-simples:1.0.0
+sudo docker run --rm minha-soma-simples:1.0.0
 ```
 
 | Parte do comando | Significado |
@@ -44,7 +44,7 @@ A base já contém ferramentas Go e arquivos Alpine. É uma imagem, não dois co
 Considere este comando executado em qualquer diretório do computador:
 
 ```bash
-docker build -t minha-soma:1.0.0 "$HOME/oficina-docker/go-soma"
+sudo docker build -t minha-soma:1.0.0 "$HOME/oficina-docker/go-soma"
 ```
 
 O contexto é a pasta `HOME/oficina-docker/go-soma`. O Dockerfile recebe os arquivos disponíveis nesse contexto; não recebe automaticamente outras pastas do computador.
@@ -110,17 +110,17 @@ Cada FROM inicia outro estágio, com os arquivos da base escolhida. O nome `buil
 O segundo FROM começa um estágio vazio, sem apagar o primeiro. O COPY busca somente `/out/soma` no estágio chamado build e grava `/soma` no estágio atual. USER escolhe uma identidade numérica sem privilégios administrativos; não exige uma conta com nome no filesystem. ENTRYPOINT registra o executável. Sem `--from=build`, a origem seria procurada no contexto do host, não no resultado da compilação anterior.
 
 ```bash
-docker build -t minha-soma:1.0.0 "$HOME/oficina-docker/go-soma"
-docker run --rm minha-soma:1.0.0
-docker image ls
-docker image history minha-soma:1.0.0
+sudo docker build -t minha-soma:1.0.0 "$HOME/oficina-docker/go-soma"
+sudo docker run --rm minha-soma:1.0.0
+sudo docker image ls
+sudo docker image history minha-soma:1.0.0
 ```
 
 A imagem final é a do último estágio por padrão. `--target build` permite produzir a imagem do primeiro estágio para inspeção:
 
 ```bash
-docker build --target build -t minha-soma-build "$HOME/oficina-docker/go-soma"
-docker run --rm -it --entrypoint sh minha-soma-build
+sudo docker build --target build -t minha-soma-build "$HOME/oficina-docker/go-soma"
+sudo docker run --rm -it --entrypoint sh minha-soma-build
 ```
 
 ## 6. Filesystem não depende de shell
@@ -137,7 +137,7 @@ Repita o build sem mudanças e observe as etapas em cache. Altere o texto da som
 
 No exemplo Vue, o primeiro estágio instala dependências a partir de package.json e package-lock.json antes de copiar o restante. Essa ordem permite reutilizar a instalação quando só o código muda. Node executa `npm run build` e gera `/app/dist`; Nginx recebe esse diretório no estágio final. O procedimento completo está no [guia Vue/Vite](09-vue-vite.md).
 
-`EXPOSE 80` documenta a porta pretendida; `docker run -p` publica no host. As portas do Vite em desenvolvimento não determinam a porta do Nginx em execução.
+`EXPOSE 80` documenta a porta pretendida; `sudo docker run -p` publica no host. As portas do Vite em desenvolvimento não determinam a porta do Nginx em execução.
 
 ## 8. Ler a receita da IDE
 
