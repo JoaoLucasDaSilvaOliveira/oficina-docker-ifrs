@@ -32,7 +32,7 @@ A janela do VS Code abre em /workspace, dentro do container. Tente encontrar o m
 | `--hostname "$(hostname)"` | Permite encontrar as entradas locais de autorização X11 do host. |
 | `-e DISPLAY` | Copia o endereço do display da sessão para o container. |
 | `-e XAUTHORITY=/tmp/oficina.xauth` | Informa onde o arquivo de autorização aparece dentro do container. |
-| Mounts somente leitura | Disponibilizam socket X11 e autorização. O fallback HOME/.Xauthority só funciona se esse arquivo existir; XAUTHORITY pode apontar para outro caminho. |
+| Mounts somente leitura | Disponibilizam socket X11 e autorização. O comando usa a autorização da sessão automaticamente e, no Mint/X11, o caminho padrão HOME/.Xauthority quando necessário. |
 | `--tmpfs ...` | Prepara o runtime gráfico com dono e permissões para o UID escolhido, mesmo se diferente de 1000. |
 | `--shm-size=256m` | Define a capacidade de memória compartilhada em /dev/shm. |
 
@@ -123,7 +123,7 @@ docker logs --tail 50 ide
 docker inspect ide
 ```
 
-Confira DISPLAY, arquivo de XAUTHORITY e sockets da sessão. Variáveis não são comandos: use echo "$DISPLAY" e echo "$XAUTHORITY". A sintaxe ${VAR:-padrao} é de Bash, não Fish. Os recursos gráficos mudam ao reiniciar a sessão; recrie o container de demonstração se necessário. Não desative globalmente a autorização X11 com xhost +.
+Copie os comandos completos no Bash, no terminal da sessão gráfica. Eles já identificam a autorização da sessão; o aluno não precisa procurar arquivos nem editar caminhos. Se a janela não abrir no laboratório, o instrutor confere a integração gráfica antes da atividade.
 
 A mesma ideia de ferramentas no Docker será usada com Vue/Vite. Mais tarde, a configuração da IDE poderá ser traduzida para Compose. A receita da IDE fica disponível para leitura no capítulo de imagens; o primeiro build da turma usa o programa de soma, sem o código do mural.
 

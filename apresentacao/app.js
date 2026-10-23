@@ -58,7 +58,7 @@
     "compose-ide": {
       file: "compose-ide.zip",
       name: "Iniciar a IDE com Compose",
-      detail: "Use no capítulo Compose. Três arquivos YAML: IDE em X11, acesso à pasta pessoal e alternativa Wayland. Usam a imagem pronta do VS Code.",
+      detail: "Use no capítulo Compose. Três arquivos YAML e README com comandos completos para copiar. Abre a IDE sem ou com acesso à pasta pessoal; não exige editar caminhos.",
       destination: "Extraia em $HOME/oficina-docker.",
     },
     "compose-mural": {

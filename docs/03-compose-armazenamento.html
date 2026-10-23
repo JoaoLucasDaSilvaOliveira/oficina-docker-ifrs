@@ -31,18 +31,22 @@ docker run --rm --mount type=volume,src=dados-lab,dst=/dados \
 docker volume inspect dados-lab</code></pre></div>
 <p>O primeiro container é removido por <code>--rm</code>, mas o volume nomeado continua e pode ser montado pelo segundo. O PostgreSQL usa esse princípio para preservar os recados do mural.</p>
 <h2 id="traduzir-a-ide-ja-conhecida-para-compose">5. Traduzir a IDE já conhecida para Compose</h2>
-<p>A comparação é opcional e acontece depois dos exemplos de Dockerfile. Baixe <a href="../downloads/compose-ide.zip">Compose da IDE</a> e extraia em <code>HOME/oficina-docker</code>. Remova apenas o container descartável da IDE anterior e forneça as variáveis da sessão:</p>
+<p>Baixe <a href="../downloads/compose-ide.zip">Compose da IDE</a> e extraia em <code>HOME/oficina-docker</code>. O ZIP inclui estes comandos em <code>README-IDE.md</code>. Copie cada bloco completo no Bash; não é necessário editar YAML, exportar variáveis separadamente ou localizar o arquivo de autorização.</p>
+<h2 id="ide-sem-acesso-a-pasta-pessoal-linux-mint-x11">1. IDE sem acesso à pasta pessoal — Linux Mint / X11</h2>
+<p>Feche a janela da IDE usada no exercício anterior. A primeira linha remove apenas esse container de demonstração.</p>
 <div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>docker rm -f ide
 cd &quot;$HOME/oficina-docker&quot;
-export LOCAL_UID=&quot;$(id -u)&quot; LOCAL_GID=&quot;$(id -g)&quot;
-export HOST_HOSTNAME=&quot;$(hostname)&quot;
-export XAUTHORITY=&quot;${XAUTHORITY:-$HOME/.Xauthority}&quot;
+LOCAL_UID=&quot;$(id -u)&quot; LOCAL_GID=&quot;$(id -g)&quot; \
+HOST_HOSTNAME=&quot;$(hostname)&quot; XAUTHORITY=&quot;${XAUTHORITY:-$HOME/.Xauthority}&quot; \
 docker compose -f compose.ide.yaml up -d</code></pre></div>
-<p>A base abre <code>/workspace</code> sem pasta pessoal montada. Para recriar com HOME:</p>
-<div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>docker compose -f compose.ide.yaml -f compose.ide.bind.yaml config
-docker compose -f compose.ide.yaml -f compose.ide.bind.yaml up -d --force-recreate
-docker compose -f compose.ide.yaml -f compose.ide.bind.yaml ps -a</code></pre></div>
-<p>O overlay usa <code>source: ${HOME}</code>, <code>target: /host-home</code> e <code>working_dir: /host-home</code>. Como o CMD da imagem abre ponto, a IDE segue esse diretório. Para Wayland nativo, substitua a base por <code>compose.ide.wayland.yaml</code>; não combine as duas bases gráficas.</p>
+<p>O comando identifica seu usuário e sua sessão gráfica automaticamente. Usa a autorização indicada pela sessão; se essa variável estiver vazia, usa <code>$HOME/.Xauthority</code>, o caminho padrão da sessão X11 do Mint. Nenhuma permissão global de acesso ao display é alterada.</p>
+<h2 id="ide-com-acesso-a-pasta-pessoal">2. IDE com acesso à pasta pessoal</h2>
+<div class="guide-code"><div class="code-bar"><span>bash</span><button type="button" aria-label="Copiar este bloco">Copiar</button></div><pre><code>cd &quot;$HOME/oficina-docker&quot;
+LOCAL_UID=&quot;$(id -u)&quot; LOCAL_GID=&quot;$(id -g)&quot; \
+HOST_HOSTNAME=&quot;$(hostname)&quot; XAUTHORITY=&quot;${XAUTHORITY:-$HOME/.Xauthority}&quot; \
+docker compose -f compose.ide.yaml -f compose.ide.bind.yaml up -d --force-recreate</code></pre></div>
+<p>Agora a pasta pessoal aparece em <code>/host-home</code>. As alterações feitas ali são nos arquivos reais do computador. O comando fornece novamente todos os valores necessários; não depende de um <code>export</code> executado antes.</p>
+<p>Para encerrar, execute <code>docker compose -f compose.ide.yaml down</code> na pasta dos arquivos. A alternativa Wayland também possui um comando completo no README do ZIP.</p>
 <h2 id="montagem-e-permissoes">6. Montagem e permissões</h2>
 <p>Um bind aponta para uma pasta do host; um volume é administrado pelo Docker. Montar sobre um diretório oculta os arquivos anteriores naquele caminho, sem mesclar ou alterar a imagem. Acesso de escrita continua sujeito a UID/GID e permissões. Montar HOME não transforma o processo em root.</p>
 <p>Fontes: <a href="https://docs.docker.com/reference/cli/docker/compose/">Compose</a>, <a href="https://docs.docker.com/engine/storage/bind-mounts/">bind mounts</a>, <a href="https://docs.docker.com/engine/storage/volumes/">volumes</a>.</p><footer>Oficina Docker · Material de acompanhamento</footer></main><script>document.querySelectorAll('.code-bar button').forEach(button=>button.addEventListener('click',async()=>{const text=button.closest('.guide-code').querySelector('code').textContent;try{if(navigator.clipboard&&window.isSecureContext)await navigator.clipboard.writeText(text);else{const input=document.createElement('textarea');input.value=text;document.body.append(input);input.select();if(!document.execCommand('copy'))throw Error();input.remove();}button.textContent='Copiado';setTimeout(()=>button.textContent='Copiar',1800);}catch{button.textContent='Selecione o texto';}}));</script></body></html>

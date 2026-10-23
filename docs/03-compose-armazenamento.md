@@ -62,26 +62,34 @@ O primeiro container é removido por `--rm`, mas o volume nomeado continua e pod
 
 ## 5. Traduzir a IDE já conhecida para Compose
 
-A comparação é opcional e acontece depois dos exemplos de Dockerfile. Baixe [Compose da IDE](../downloads/compose-ide.zip) e extraia em `HOME/oficina-docker`. Remova apenas o container descartável da IDE anterior e forneça as variáveis da sessão:
+Baixe [Compose da IDE](../downloads/compose-ide.zip) e extraia em `HOME/oficina-docker`. O ZIP inclui estes comandos em `README-IDE.md`. Copie cada bloco completo no Bash; não é necessário editar YAML, exportar variáveis separadamente ou localizar o arquivo de autorização.
+
+## 1. IDE sem acesso à pasta pessoal — Linux Mint / X11
+
+Feche a janela da IDE usada no exercício anterior. A primeira linha remove apenas esse container de demonstração.
 
 ```bash
 docker rm -f ide
 cd "$HOME/oficina-docker"
-export LOCAL_UID="$(id -u)" LOCAL_GID="$(id -g)"
-export HOST_HOSTNAME="$(hostname)"
-export XAUTHORITY="${XAUTHORITY:-$HOME/.Xauthority}"
+LOCAL_UID="$(id -u)" LOCAL_GID="$(id -g)" \
+HOST_HOSTNAME="$(hostname)" XAUTHORITY="${XAUTHORITY:-$HOME/.Xauthority}" \
 docker compose -f compose.ide.yaml up -d
 ```
 
-A base abre `/workspace` sem pasta pessoal montada. Para recriar com HOME:
+O comando identifica seu usuário e sua sessão gráfica automaticamente. Usa a autorização indicada pela sessão; se essa variável estiver vazia, usa `$HOME/.Xauthority`, o caminho padrão da sessão X11 do Mint. Nenhuma permissão global de acesso ao display é alterada.
+
+## 2. IDE com acesso à pasta pessoal
 
 ```bash
-docker compose -f compose.ide.yaml -f compose.ide.bind.yaml config
+cd "$HOME/oficina-docker"
+LOCAL_UID="$(id -u)" LOCAL_GID="$(id -g)" \
+HOST_HOSTNAME="$(hostname)" XAUTHORITY="${XAUTHORITY:-$HOME/.Xauthority}" \
 docker compose -f compose.ide.yaml -f compose.ide.bind.yaml up -d --force-recreate
-docker compose -f compose.ide.yaml -f compose.ide.bind.yaml ps -a
 ```
 
-O overlay usa `source: ${HOME}`, `target: /host-home` e `working_dir: /host-home`. Como o CMD da imagem abre ponto, a IDE segue esse diretório. Para Wayland nativo, substitua a base por `compose.ide.wayland.yaml`; não combine as duas bases gráficas.
+Agora a pasta pessoal aparece em `/host-home`. As alterações feitas ali são nos arquivos reais do computador. O comando fornece novamente todos os valores necessários; não depende de um `export` executado antes.
+
+Para encerrar, execute `docker compose -f compose.ide.yaml down` na pasta dos arquivos. A alternativa Wayland também possui um comando completo no README do ZIP.
 
 ## 6. Montagem e permissões
 

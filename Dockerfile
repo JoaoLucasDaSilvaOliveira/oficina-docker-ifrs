@@ -5,7 +5,7 @@ COPY ferramentas ./ferramentas
 COPY apresentacao ./apresentacao
 COPY docs ./docs
 COPY exemplos ./exemplos
-COPY compose*.yaml ./
+COPY compose ./compose
 COPY index.html ./index.html
 RUN python ferramentas/preparar_materiais.py --site-dir /site
 

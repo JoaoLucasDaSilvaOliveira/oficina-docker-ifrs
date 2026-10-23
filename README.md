@@ -29,7 +29,7 @@ Crie `$HOME/oficina-docker` pelo gerenciador de arquivos. Os ZIPs já contêm a 
 | `go-receitas.zip` | Somente Dockerfiles e `.dockerignore` em `go-soma/`; preserva o main.go já editado |
 | `go-soma.zip` | Projeto completo para recuperação opcional; pode substituir a edição de main.go |
 | `vue-vite.zip` | Pasta `vue-vite/` com template Vue/Vite, lockfile, Dockerfile e Nginx |
-| `compose-ide.zip` | Três YAMLs para traduzir a execução da IDE para Compose |
+| `compose-ide.zip` | Três YAMLs e README com comandos completos; identifica a sessão gráfica sem editar os arquivos |
 | `compose-mural.zip` | Três YAMLs para API, frontend, banco e rede |
 | `receitas-dockerfile.zip` | Receita da IDE para leitura e discussão |
 
@@ -50,7 +50,7 @@ As imagens precisam ser publicadas pelo instrutor antes da oficina. O site não 
 
 ## Autoria e preparação
 
-[INSTRUTOR.md](INSTRUTOR.md) descreve geração dos materiais, preview, preparação das imagens e publicação manual. [ROTEIRO.md](ROTEIRO.md) registra o percurso pedagógico. [DESIGN.md](DESIGN.md) descreve a interface. [TESTES.md](TESTES.md) registra a validação.
+[INSTRUTOR.md](docs/autoria/INSTRUTOR.md) descreve geração dos materiais, preview, preparação das imagens e publicação manual. [ROTEIRO.md](docs/autoria/ROTEIRO.md) registra o percurso pedagógico. [DESIGN.md](docs/autoria/DESIGN.md) descreve a interface. [TESTES.md](docs/autoria/TESTES.md) registra a validação.
 
 Para gerar os materiais e uma pasta estática local, sem publicar:
 
@@ -59,3 +59,15 @@ python3 ferramentas/preparar_materiais.py --site-dir .runtime/site
 ```
 
 A ferramenta de autoria não faz parte dos comandos da aula. Ela copia somente os arquivos públicos permitidos para a pasta de site. O workflow de Pages é disparado manualmente no GitHub Actions; não há publicação automática em push.
+
+## Organização do repositório
+
+- `apresentacao/`: slides, diagramas e consulta de comandos.
+- `exemplos/`: fontes e Dockerfiles de Go, Vue, IDE e mural.
+- `compose/`: configurações da IDE e do mural; os ZIPs mantêm os YAMLs na raiz da pasta extraída.
+- `docs/`: guias dos participantes; `docs/autoria/` reúne roteiro, preparação e registros do instrutor.
+- `downloads/`: arquivos públicos gerados.
+- `ferramentas/` e `testes/`: geração e validação do material.
+- `infra/`: configuração do servidor do preview.
+
+O `Dockerfile` e o `compose.yaml` da raiz servem apenas ao preview dos slides. Para iniciar o mural a partir deste repositório, use `docker compose -f compose/compose.app.yaml up -d --wait`. Os comandos dos alunos continuam usando os YAMLs extraídos dos downloads.

@@ -129,8 +129,8 @@ def build_downloads():
         'go-soma.zip': package_sources(ROOT / 'exemplos/go-soma'),
         'go-receitas.zip': [(ROOT / 'exemplos/go-soma' / name, 'go-soma/' + name) for name in ['Dockerfile', 'Dockerfile.simples', '.dockerignore']],
         'vue-vite.zip': package_sources(ROOT / 'exemplos/vue-vite'),
-        'compose-ide.zip': [(ROOT / name, name) for name in COMPOSE_IDE],
-        'compose-mural.zip': [(ROOT / name, name) for name in COMPOSE_MURAL],
+        'compose-ide.zip': [(ROOT / 'compose' / name, name) for name in [*COMPOSE_IDE, 'README-IDE.md']],
+        'compose-mural.zip': [(ROOT / 'compose' / name, name) for name in COMPOSE_MURAL],
         'receitas-dockerfile.zip': [(ROOT / 'exemplos/ide/Dockerfile', 'receitas/ide.Dockerfile')],
     }
     required = [ROOT / 'exemplos/go-soma/main.go', ROOT / 'exemplos/go-soma/Dockerfile', ROOT / 'exemplos/go-soma/Dockerfile.simples', ROOT / 'exemplos/vue-vite/package.json', ROOT / 'exemplos/vue-vite/package-lock.json', ROOT / 'exemplos/vue-vite/Dockerfile']
@@ -143,7 +143,7 @@ def build_downloads():
         write_zip(destination / name, files)
     shutil.copyfile(ROOT / 'exemplos/go-soma/main.go', destination / 'main.go')
     for name in COMPOSE_IDE + COMPOSE_MURAL:
-        shutil.copyfile(ROOT / name, destination / name)
+        shutil.copyfile(ROOT / 'compose' / name, destination / name)
     # Remover somente produtos públicos antigos conhecidos; não limpar o diretório todo.
     for name in ['compose-slides.zip', 'compose-oficina.zip', 'mural-go.zip', 'oficina-docker.zip', 'compose.yaml']:
         (destination / name).unlink(missing_ok=True)
@@ -244,6 +244,8 @@ def build_site(destination, downloads):
     for folder, extensions in [('apresentacao', WEB_EXTENSIONS), ('docs', {'.html', '.md', '.txt'})]:
         for path in sorted((ROOT / folder).rglob('*')):
             relative = path.relative_to(ROOT)
+            if folder == 'docs' and path.relative_to(ROOT / folder).parts[0] == 'autoria':
+                continue
             if path.is_symlink() or any(part.startswith('.') or part in SOURCE_IGNORES for part in relative.parts):
                 continue
             if path.is_file() and path.suffix.lower() in extensions:

@@ -136,6 +136,16 @@ window.OFICINA_GUIDE_INDEX = [
         "level": 2
       },
       {
+        "id": "ide-sem-acesso-a-pasta-pessoal-linux-mint-x11",
+        "title": "1. IDE sem acesso à pasta pessoal — Linux Mint / X11",
+        "level": 2
+      },
+      {
+        "id": "ide-com-acesso-a-pasta-pessoal",
+        "title": "2. IDE com acesso à pasta pessoal",
+        "level": 2
+      },
+      {
         "id": "montagem-e-permissoes",
         "title": "6. Montagem e permissões",
         "level": 2
